@@ -23,7 +23,8 @@ class LanguageModel():
 
     def __init__(self, config_file: str = None, **kwargs):
 
-        self.template = self.load_template(kwargs.get("template", "config/templates.json"))
+        self.template = self.load_template(kwargs.get("template", "config/templates/default_template.txt"))
+        self.similarity_template = self.load_template(kwargs.get("similarity_template", "config/templates/default_similarity_template.txt"))
 
         raise NotImplementedError
     
@@ -41,6 +42,8 @@ class LanguageModel():
 
         #TODO given prompt and caption and pre-defined template ("Does caption XXX sufficiently describe YYY?"), check if yes or no is more likely
 
+        #TODO might be required to be implemented in subclass to have access to language model token probabilities
+
         raise NotImplementedError
     
     def generate_optimized_prompt(self, user_prompt: str, image_caption: str, previous_prompts: list = []):
@@ -55,9 +58,10 @@ class LanguageModel():
             str: optimized prompt
         """
 
-        #TODO generate optimized prompt for image captioning using predefined templates
+        LLM_prompt = self.get_language_prompt(user_prompt, image_caption, previous_prompts)
+        LLM_response = self.query_language_model(LLM_prompt)
 
-        raise NotImplementedError
+        return LLM_response
     
     def load_template(self, template_file: str):
         """
@@ -69,11 +73,12 @@ class LanguageModel():
             str: template
         """
 
-        #TODO load templates from file
+        with open(template_file, "r") as f:
+            template = f.read()
+        
+        return template
 
-        raise NotImplementedError
-
-    def generate_language_prompt(self, user_prompt: str, image_caption: str, previous_prompts: list = []):
+    def get_language_prompt(self, user_prompt: str, image_caption: str, previous_prompts: list = []):
         """
         Generate language prompt given original user prompt, image caption, and possibly previous prompts
 
@@ -98,6 +103,39 @@ class LanguageModel():
                 prompt_suffix = "" #TODO: add suffix for previous prompts
                 previous_prompt += prompt_prefix + prompt + prompt_suffix
             prompt = prompt.replace("<PREVIOUS_PROMPTS>", previous_prompt)
+
+        raise NotImplementedError
+    
+    def get_similarity_prompt(self, user_prompt: str, image_caption: str):
+        """
+        Generate similarity prompt given original user prompt and image caption
+
+        Parameters:
+            user_prompt (str): user prompt
+            image_caption (str): image caption
+        Returns:
+            str: prompt for similarity check
+        """
+
+        # Replace <USER_PROMPT> in template with user prompt
+        prompt = self.similarity_template.replace("<USER_PROMPT>", user_prompt)
+        # Replace <IMAGE_CAPTION> in template with image caption
+        prompt = prompt.replace("<IMAGE_CAPTION>", image_caption)
+
+        return prompt
+    
+    def query_language_model(self, prompt: str):
+        """
+        Query language model with prompt
+        -> to be implemented by sub-class
+
+        Parameters:
+            prompt (str): prompt to query language model with
+        Returns:
+            str: generated text
+        """
+
+        #TODO query language model with prompt -> to be overwritten by sub-class
 
         raise NotImplementedError
 
