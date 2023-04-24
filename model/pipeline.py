@@ -44,10 +44,10 @@ class Pipeline:
         previous_prompts = []
         for i in range(max_cycles):
             # Generate image
-            image_path = self.image_generator.generate_image(prompt)
+            image = self.image_generator.generate_image(prompt)
 
             # Generate caption
-            caption = self.image_captioning.generate_caption(image_path)
+            caption = self.image_captioning.generate_caption(image)
 
             # Check termnation condition
             if self.terminate_on_similarity and self.language_model.check_similarity(prompt, caption):
@@ -57,6 +57,10 @@ class Pipeline:
             prompt = self.language_model.generate_optimized_prompt(user_prompt, caption, previous_prompts)
             previous_prompts.append(prompt)
 
+            # Save image and caption
+            image.save(os.path.join(folder_name, f"image_{i}.png"))
+            with open(os.path.join(folder_name, f"caption_{i}.txt"), "w") as f:
+                f.write(caption)
+            
         # Return path to folder of generated images
-        #TODO folder path has to be provided to models as well somehow. Maybe just use image representations and only save at the end in pipline class
         return folder_name

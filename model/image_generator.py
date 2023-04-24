@@ -1,12 +1,12 @@
 import os, sys
 
-def load_image_generator(model: str, config_file: str = None):
+def load_image_generator(model: str, **kwargs):
     """
     Load specified image generator model
 
     Parameters:
         model (str): name of model to load
-        config_file (str): path to config file for model
+        kwargs (dict): additional config arguments to pass to model
     Returns:
         ImageGenerator: instanciated and configured image generator sub-class
     """
@@ -30,7 +30,7 @@ class ImageGenerator:
         Parameters:
             prompt (str): prompt to generate image from
         Returns:
-            str: path to generated image #TODO: do we want to return the image itself?
+            PIL.Image: generated image
         """
 
         #TODO generate image from prompt

@@ -1,12 +1,12 @@
 import os, sys
 
-def load_language_model(model: str, config_file: str = None, **kwargs):
+def load_language_model(model: str, **kwargs):
     """
     Load specified LLM model
     
     Parameters:
         model (str): name of model to load
-        config_file (str): path to config file for model
+        kwargs (dict): additional config arguments to pass to model
     Returns:
         LanguageModel: instanciated and configured language model sub-class
     """
@@ -21,7 +21,7 @@ class LanguageModel():
     Base class for language models
     """
 
-    def __init__(self, config_file: str = None, **kwargs):
+    def __init__(self, **kwargs):
 
         self.template = self.load_template(kwargs.get("template", "config/templates/default_template.txt"))
         self.similarity_template = self.load_template(kwargs.get("similarity_template", "config/templates/default_similarity_template.txt"))

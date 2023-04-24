@@ -1,12 +1,13 @@
 import os, sys
+from PIL import Image
 
-def load_captioning_model(model: str, config_file: str = None):
+def load_captioning_model(model: str, **kwargs):
     """
     Load specified image captioning model
 
     Parameters:
         model (str): name of model to load
-        config_file (str): path to config file for model
+        kwargs (dict): additional config arguments to pass to model
     Returns:
         CaptioningModel: instanciated and configured captioning model sub-class
     """
@@ -23,12 +24,12 @@ class CaptioningModel:
     def __init__(self):
         raise NotImplementedError
     
-    def generate_caption(self, image_path: str):
+    def generate_caption(self, image: Image):
         """
         Generate caption for image
 
         Parameters:
-            image_path (str): path to image to generate caption for #TODO do we want to pass the image itself?
+            image (PIL.Image): image to generate caption for
         Returns:
             str: generated caption
         """
