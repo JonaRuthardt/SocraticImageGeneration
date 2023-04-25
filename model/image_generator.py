@@ -1,4 +1,9 @@
 import os, sys
+import enum
+
+class ImageGeneratorType(enum.Enum):
+    StableDiffusion = "StableDiffusion"
+    #TODO specify all available image generators here
 
 def load_image_generator(model: str, **kwargs):
     """

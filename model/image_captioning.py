@@ -1,5 +1,10 @@
 import os, sys
 from PIL import Image
+import enum
+
+class CaptioningModelType(enum.Enum):
+    ClipCap = "ClipCap"
+    #TODO specify all available captioning models here
 
 def load_captioning_model(model: str, **kwargs):
     """
