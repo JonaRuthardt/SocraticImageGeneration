@@ -143,3 +143,9 @@ class LanguageModel():
         #TODO query language model with prompt -> to be overwritten by sub-class
 
         raise NotImplementedError
+    
+    def reset(self):
+        """
+        Optional method to reset model between generations
+        """
+        pass

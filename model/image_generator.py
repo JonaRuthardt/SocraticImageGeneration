@@ -41,3 +41,9 @@ class ImageGenerator:
         #TODO generate image from prompt
 
         raise NotImplementedError
+    
+    def reset(self):
+        """
+        Optional method to reset model between generations
+        """
+        pass

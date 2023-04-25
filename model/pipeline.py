@@ -73,5 +73,20 @@ class Pipeline:
             with open(os.path.join(folder_name, f"caption_{i}.txt"), "w") as f:
                 f.write(caption)
             
+        # Store intermediate and final prompts
+        with open(os.path.join(folder_name, "prompts.txt"), "w") as f:
+            f.write("<USER PROMPT>\n" + user_prompt + "\n\n")
+            for i, prompt in enumerate(previous_prompts):
+                f.write(f"<OPTIMIZED PROMPT ITERATION {i}>\n" + prompt + "\n\n")
+        
         # Return path to folder of generated images
         return folder_name
+    
+    def reset_pipeline(self):
+        """
+        Reset pipeline and models between images
+        """
+        self.language_model.reset()
+        self.image_generator.reset()
+        self.image_captioning.reset()
+    

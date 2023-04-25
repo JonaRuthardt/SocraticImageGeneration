@@ -42,3 +42,9 @@ class CaptioningModel:
         #TODO generate caption for image
 
         raise NotImplementedError
+    
+    def reset(self):
+        """
+        Optional method to reset model between generations
+        """
+        pass
