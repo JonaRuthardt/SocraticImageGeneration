@@ -2,7 +2,8 @@ import os, sys
 import enum
 
 class DatasetType(enum.Enum):
-    Flickr30k = "Flickr30k"
+    Flickr30k = "flickr30k"
+    PartiPrompts = "parti-prompts"
     #TODO specify all available datasets here
 
 def load_data_loader(dataset: str, **kwargs):

@@ -2,9 +2,12 @@ import os, sys
 import random
 import json
 
+import datasets
+
 from model.language_model import load_language_model
 from model.image_generator import load_image_generator
 from model.image_captioning import load_captioning_model
+
 
 class Pipeline:
     def __init__(self, **kwargs):
@@ -20,15 +23,27 @@ class Pipeline:
         self.terminate_on_similarity = kwargs.get("terminate_on_similarity", True)
 
         # Set-up folder to store generated images and save hyperparameters
+        self.image_id = 0
         experiment_name = kwargs.get("experiment_name", "default-experiment")
         self.path = os.path.join("data", experiment_name)
         os.mkdir(self.path, exist_ok=False)
         with open(os.path.join(self.path, "hyperparameters.json"), "w") as f:
             json.dump(kwargs, f)
 
-
-        # TODO potentially load other models or configurations
-        raise NotImplementedError
+        self.dataset = kwargs.get("dataset", None)
+        if self.dataset is not None:
+            # Load and configure dataset
+            if self.dataset == "parti-prompts":
+                self.dataset = datasets.load_dataset("parti_prompts", split="train")["Prompt"]
+            elif self.dataset == "flickr30k":
+                dataset = datasets.load_dataset("embedding-data/flickr30k-captions", split="train")
+                self.dataset = [d[0] for d in dataset["set"]]
+            else:
+                raise ValueError(f"Unknown dataset {self.dataset}")
+            
+            # Execute dataset-based experiment pipeline
+            #TODO do we always directly want to execute it here or implement running the experiments outside of the pipeline?
+            self.generate_images_from_dataset()
 
     def generate_image(self, user_prompt: str, max_cycles: int = 5):
         """
@@ -41,14 +56,11 @@ class Pipeline:
             str: path to folder of generated image(s)
         """
         
-        # Setup folder to store generated images
-        #TODO could be implemented differently in a better way
-        #BUG what if you re-run with same prompts? Won't overwrite the data but will create a new folder
-        folder_name = str(random.randint(0, 999999)).zfill(6)
-        while os.path.exists(os.path.join(self.path, folder_name)):
-            folder_name = str(random.randint(0, 999999)).zfill(6)
-        folder_name = os.path.join("data", folder_name)
-        os.mkdir(folder_name)
+        # Set up folder to store generated images
+        folder_name = str(self.image_id).zfill(6)
+        folder_name = os.path.join(self.path, folder_name)
+        os.mkdir(folder_name, exist_ok=False)
+        self.image_id += 1
 
         # Generate image
         prompt = user_prompt
@@ -81,6 +93,15 @@ class Pipeline:
         
         # Return path to folder of generated images
         return folder_name
+    
+    def generate_images_from_dataset(self, max_cycles: int = 5):
+        """
+        Generate images based on prompts from dataset
+        """
+
+        for prompt in self.dataset:
+            self.generate_image(prompt, max_cycles=max_cycles)
+            self.reset_pipeline()
     
     def reset_pipeline(self):
         """
