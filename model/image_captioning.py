@@ -1,12 +1,13 @@
 import os, sys
 from PIL import Image
 import enum
+from transformers import BlipProcessor, BlipForConditionalGeneration
 
 class CaptioningModelType(enum.Enum):
     ClipCap = "ClipCap"
     #TODO specify all available captioning models here
 
-def load_captioning_model(model: str, **kwargs):
+def load_captioning_model(**args):
     """
     Load specified image captioning model
 
@@ -17,17 +18,20 @@ def load_captioning_model(model: str, **kwargs):
         CaptioningModel: instanciated and configured captioning model sub-class
     """
 
-    # TODO instanciate captioning model sub-class from given model name
+    captioning_model = CaptioningModel(args['model_name'], args['cap_text'])
 
-    raise NotImplementedError
+    return captioning_model
 
 class CaptioningModel:
     """
     Base class for image captioning models
     """
 
-    def __init__(self):
-        raise NotImplementedError
+    def __init__(self, model_name: str, cap_text: str):
+        self.processor = BlipProcessor.from_pretrained(model_name)
+        self.model = BlipForConditionalGeneration.from_pretrained(model_name)
+        self.cap_text = cap_text
+        self.conditioning_cap = True if cap_text else False
     
     def generate_caption(self, image: Image):
         """
@@ -39,9 +43,15 @@ class CaptioningModel:
             str: generated caption
         """
 
-        #TODO generate caption for image
+        if self.conditioning_cap:
+            inputs = self.processor(image, self.cap_text, return_tensors="pt")
+        else:
+            inputs = self.processor(image, return_tensors="pt")
+        
+        out = self.model.generate(**inputs)
+        caption = self.processor.decode(out[0], skip_special_tokens=True)
 
-        raise NotImplementedError
+        return caption
     
     def reset(self):
         """
