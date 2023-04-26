@@ -25,10 +25,10 @@ class Pipeline:
         # Set-up folder to store generated images and save hyperparameters
         self.image_id = 0
         experiment_name = kwargs.get("experiment_name", "default-experiment")
-        self.path = os.path.join("data", experiment_name)
+        self.path = os.path.join("data/results", experiment_name)
         os.mkdir(self.path, exist_ok=False)
         with open(os.path.join(self.path, "hyperparameters.json"), "w") as f:
-            json.dump(kwargs, f)
+            json.dump(self.hyperparameters, f)
 
         self.dataset = kwargs.get("dataset", None)
         if self.dataset is not None:
