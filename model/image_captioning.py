@@ -4,23 +4,27 @@ import enum
 from transformers import BlipProcessor, BlipForConditionalGeneration
 
 class CaptioningModelType(enum.Enum):
-    ClipCap = "ClipCap"
+    BLIP_LARGE = "Salesforce/blip-image-captioning-large"
     #TODO specify all available captioning models here
 
-def load_captioning_model(**args):
+def load_captioning_model(**kwargs):
     """
     Load specified image captioning model
 
     Parameters:
-        model (str): name of model to load
         kwargs (dict): additional config arguments to pass to model
     Returns:
         CaptioningModel: instanciated and configured captioning model sub-class
     """
 
-    captioning_model = CaptioningModel(args['model_name'], args['cap_text'])
+    #NOTE 
+    """
+    example of parameters for the image captioning:
+        model_name: 'Salesforce/blip-image-captioning-large'
+        cap_text: 'a photograph of' / 'an image of' (works with BLIP_LARGE)
+    """
 
-    return captioning_model
+    return CaptioningModel(kwargs['model_name'], kwargs['cap_text'])
 
 class CaptioningModel:
     """
@@ -33,7 +37,7 @@ class CaptioningModel:
         self.cap_text = cap_text
         self.conditioning_cap = True if cap_text else False
     
-    def generate_caption(self, image: Image):
+    def generate_caption(self, image: Image): # 
         """
         Generate caption for image
 
