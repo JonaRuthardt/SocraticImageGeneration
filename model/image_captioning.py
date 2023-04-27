@@ -17,27 +17,18 @@ def load_captioning_model(**kwargs):
         CaptioningModel: instanciated and configured captioning model sub-class
     """
 
-    #NOTE 
-    """
-    example of parameters for the image captioning:
-        model_name: 'Salesforce/blip-image-captioning-large'
-        cap_text: 'a photograph of' / 'an image of' (works with BLIP_LARGE)
-    """
-
-    return CaptioningModel(kwargs['model_name'], kwargs['cap_text'])
+    return CaptioningModel(kwargs['model_name'])
 
 class CaptioningModel:
     """
     Base class for image captioning models
     """
 
-    def __init__(self, model_name: str, cap_text: str):
+    def __init__(self, model_name: str):
         self.processor = BlipProcessor.from_pretrained(model_name)
         self.model = BlipForConditionalGeneration.from_pretrained(model_name)
-        self.cap_text = cap_text
-        self.conditioning_cap = True if cap_text else False
     
-    def generate_caption(self, image: Image): # 
+    def generate_caption(self, image: Image, cap_text: str = ''): # 
         """
         Generate caption for image
 
@@ -47,8 +38,8 @@ class CaptioningModel:
             str: generated caption
         """
 
-        if self.conditioning_cap:
-            inputs = self.processor(image, self.cap_text, return_tensors="pt")
+        if cap_text:
+            inputs = self.processor(image, cap_text, return_tensors="pt")
         else:
             inputs = self.processor(image, return_tensors="pt")
         
