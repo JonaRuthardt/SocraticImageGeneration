@@ -1,5 +1,4 @@
 import os, sys
-import torch
 from PIL import Image
 import enum
 from transformers import BlipProcessor, BlipForConditionalGeneration
