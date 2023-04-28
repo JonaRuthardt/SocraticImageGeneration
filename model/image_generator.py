@@ -1,4 +1,9 @@
 import os, sys
+import enum
+
+class ImageGeneratorType(enum.Enum):
+    StableDiffusion = "StableDiffusion"
+    #TODO specify all available image generators here
 
 def load_image_generator(model: str, **kwargs):
     """
@@ -36,3 +41,9 @@ class ImageGenerator:
         #TODO generate image from prompt
 
         raise NotImplementedError
+    
+    def reset(self):
+        """
+        Optional method to reset model between generations
+        """
+        pass

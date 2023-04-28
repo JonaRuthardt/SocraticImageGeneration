@@ -1,4 +1,9 @@
 import os, sys
+import enum
+
+class LanguageModelType(enum.Enum):
+    GPT3 = "GPT-3"
+    #TODO specify all available language models here
 
 def load_language_model(model: str, **kwargs):
     """
@@ -138,4 +143,9 @@ class LanguageModel():
         #TODO query language model with prompt -> to be overwritten by sub-class
 
         raise NotImplementedError
-
+    
+    def reset(self):
+        """
+        Optional method to reset model between generations
+        """
+        pass
