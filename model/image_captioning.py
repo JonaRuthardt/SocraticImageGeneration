@@ -4,7 +4,7 @@ import enum
 from transformers import BlipProcessor, BlipForConditionalGeneration
 
 class CaptioningModelType(enum.Enum):
-    BLIP_LARGE = "Salesforce/blip-image-captioning-large"
+    BLIP_LARGE = "blip_large"
     #TODO specify all available captioning models here
 
 def load_captioning_model(**kwargs):
@@ -17,27 +17,62 @@ def load_captioning_model(**kwargs):
         CaptioningModel: instanciated and configured captioning model sub-class
     """
 
-    return CaptioningModel(kwargs['model_name'])
+    model_name = kwargs.get('model_name', 'blip_large')
+    if model_name == 'blip_large':
+        captioning_model = BlipLarge(**kwargs)
+    else:
+        raise ValueError(f"Unknown captioning model {model_name}")
+
+    return captioning_model
 
 class CaptioningModel:
     """
     Base class for image captioning models
     """
 
-    def __init__(self, model_name: str):
-        self.processor = BlipProcessor.from_pretrained(model_name)
-        self.model = BlipForConditionalGeneration.from_pretrained(model_name)
-    
-    def generate_caption(self, image: Image, cap_text: str = ''): # 
+    def __init__(self, **kwargs):
+        self.model_name = kwargs["model_name"]
+
+    def generate_caption(self, image: Image, cap_text: str = '') -> str:
         """
         Generate caption for image
 
         Parameters:
             image (PIL.Image): image to generate caption for
+            cap_text (str) [optional]: caption text to condition on
         Returns:
             str: generated caption
         """
 
+        raise NotImplementedError
+    
+    def reset(self) -> None:
+        """
+        Optional method to reset model between generations
+        """
+        pass
+
+
+class BlipLarge(CaptioningModel):
+    """
+    Blip-based image captioning model
+    """
+    def __init__(self):
+        super().__init__('blip_large')
+
+        self.processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large")
+        self.model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large")
+
+    def generate_caption(self, image: Image, cap_text: str = ''):
+        """
+        Generate caption for image
+        
+        Parameters:
+            image (PIL.Image): image to generate caption for
+            cap_text (str) [optional]: caption text to condition on
+        Returns:
+            str: generated caption
+        """
         if cap_text:
             inputs = self.processor(image, cap_text, return_tensors="pt")
         else:
@@ -47,9 +82,4 @@ class CaptioningModel:
         caption = self.processor.decode(out[0], skip_special_tokens=True)
 
         return caption
-    
-    def reset(self):
-        """
-        Optional method to reset model between generations
-        """
-        pass
+

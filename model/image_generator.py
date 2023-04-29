@@ -25,7 +25,7 @@ class ImageGenerator:
     Base class for image generators
     """
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         raise NotImplementedError
     
     def generate_image(self, prompt: str):
