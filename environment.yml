@@ -191,7 +191,9 @@ dependencies:
   - yarl=1.8.1
   - zlib=1.2.13
   - zstd=1.5.5
+  - diffusers=0.11.0 
   - pip:
+    - safetensors==0.3.1
     - ftfy==6.1.1
     - mpmath==1.2.1
     - open-clip-torch==2.17.2
