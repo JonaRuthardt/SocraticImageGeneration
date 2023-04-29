@@ -149,3 +149,35 @@ class LanguageModel():
         Optional method to reset model between generations
         """
         pass
+
+
+class ChatGPT(LanguageModel):
+    """
+    ChatGPT language model
+    """
+
+    def __init__(self, **kwargs):
+
+        super().__init__(**kwargs)
+
+        api_key = "YOUR_API_KEY"
+    
+    def query_language_model(self, prompt: str):
+        """
+        Query language model with prompt
+
+        Parameters:
+            prompt (str): prompt to query language model with
+        Returns:
+            str: generated text
+        """
+
+        #TODO query language model with prompt -> to be overwritten by sub-class
+
+        raise NotImplementedError
+    
+    def reset(self):
+        """
+        Optional method to reset model between generations
+        """
+        pass
