@@ -17,21 +17,21 @@ class Pipeline:
         """
         self.hyperparameters = kwargs
 
-        self.language_model = load_language_model(**kwargs)
-        self.image_generator = load_image_generator(**kwargs)
-        self.image_captioning = load_captioning_model(**kwargs)
+        self.language_model = load_language_model(**kwargs.get('language_model',{}))
+        self.image_generator = load_image_generator(**kwargs.get('image_generator',{}))
+        self.image_captioning = load_captioning_model(**kwargs.get('image_captioning',{}))
 
-        self.terminate_on_similarity = kwargs.get("terminate_on_similarity", True)
+        self.terminate_on_similarity = kwargs.get('pipeline',{}).get("terminate_on_similarity", True)
 
         # Set-up folder to store generated images and save hyperparameters
         self.image_id = 0
-        experiment_name = kwargs.get("experiment_name", "default-experiment")
+        experiment_name = kwargs.get('pipeline',{}).get("experiment_name", "default-experiment")
         self.path = os.path.join("data/results", experiment_name)
         os.makedirs(self.path, exist_ok=False)
         with open(os.path.join(self.path, "hyperparameters.json"), "w") as f:
             json.dump(self.hyperparameters, f)
 
-        self.dataset = kwargs.get("dataset", None)
+        self.dataset = kwargs.get('dataset',{}).get("dataset", None)
         if self.dataset is not None:
             # Load and configure dataset
             if self.dataset == "parti-prompts":
