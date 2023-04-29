@@ -19,7 +19,7 @@ class ImageGeneratorType(enum.Enum):
 
 IMAGE_GENERATORS = frozenset(set([img_gen_t.value for img_gen_t in ImageGeneratorType]))
 
-def load_image_generator(image_generator: str,  #TODO fix
+def load_image_generator(model: str,  #TODO fix
                          device_map: Optional[Union[str, torch.device]]=None, 
                          torch_dtype:str|torch.dtype=torch.float16,
                          seed:int=None, 
@@ -35,7 +35,6 @@ def load_image_generator(image_generator: str,  #TODO fix
     """
     print("Loading image generation model")
 
-    model = image_generator
     # Only the allowed types can be used
     if model not in IMAGE_GENERATORS:
         raise f"The Text-to-Image Generator given (\"{model}\") is not a recognised Generator from: {IMAGE_GENERATORS}."

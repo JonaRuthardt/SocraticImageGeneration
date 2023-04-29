@@ -22,7 +22,7 @@ def load_language_model(**kwargs):
 
     # TODO instanciate language model sub-class from given model name
 
-    model_name = kwargs.get('language_model', LanguageModelType.chat_gpt.value)
+    model_name = kwargs.get('model', LanguageModelType.chat_gpt.value)
     if model_name == LanguageModelType.chat_gpt.value:
         language_model = ChatGPT(**kwargs)
     elif model_name == LanguageModelType.davinci_003.value:

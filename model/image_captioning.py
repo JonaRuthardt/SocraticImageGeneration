@@ -19,8 +19,8 @@ def load_captioning_model(**kwargs):
     """
     print("Loading captioning model")
 
-    model_name = kwargs.get('model_name', CaptioningModelType.BLIP_LARGE.value)
-    kwargs["model_name"] = model_name
+    model_name = kwargs.get('model', CaptioningModelType.BLIP_LARGE.value)
+    kwargs["model"] = model_name
     if model_name == CaptioningModelType.BLIP_LARGE.value:
         captioning_model = BlipLarge(**kwargs)
     else:
@@ -34,7 +34,7 @@ class CaptioningModel:
     """
 
     def __init__(self, **kwargs):
-        self.__model_name = kwargs["model_name"]
+        self.__model_name = kwargs["model"]
 
     @property
     def model_name(self):
