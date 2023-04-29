@@ -1,6 +1,8 @@
 import os, sys
 import enum
 import openai
+from transformers import pipeline
+from transformers import AutoTokenizer, AutoModelForCausalLM
 
 class LanguageModelType(enum.Enum):
     chat_gpt = "chat_gpt"
@@ -226,7 +228,7 @@ class ChatGPT(LanguageModel):
             str: generated text
         """
         generated_prompt = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4",
             messages=prompt)
 
         self.token_usage += generated_prompt['usage']['total_tokens']
@@ -238,3 +240,101 @@ class ChatGPT(LanguageModel):
         Optional method to reset model between generations
         """
         pass
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class Cerebras1B(LanguageModel):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        self.tokenizer = AutoTokenizer.from_pretrained("cerebras/Cerebras-GPT-1.3B")
+        self.model = AutoModelForCausalLM.from_pretrained("cerebras/Cerebras-GPT-1.3B").to("cuda")
+        self.pipeline = pipeline("text-generation", model=self.model, tokenizer=self.tokenizer, device=0)
+
+    def query_language_model(self, prompt: str):
+        """
+        Query language model with prompt
+
+        Parameters:
+            prompt (str): prompt to query language model with
+        Returns:
+            str: generated text
+        """
+
+        generated_text = self.pipeline(prompt, max_length=150, do_sample=False, no_repeat_ngram_size=2)[0]
+
+        return generated_text['generated_text']
