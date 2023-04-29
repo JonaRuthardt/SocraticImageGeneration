@@ -86,10 +86,10 @@ class Pipeline:
                 f.write(caption)
             
         # Store intermediate and final prompts
-        with open(os.path.join(folder_name, "prompts.txt"), "w") as f:
-            f.write("<USER PROMPT>\n" + user_prompt + "\n\n")
+        with open(os.path.join(folder_name, "prompts.csv"), "w") as f:
+            f.write(f"user_prompt\t{user_prompt}\n")
             for i, prompt in enumerate(previous_prompts):
-                f.write(f"<OPTIMIZED PROMPT ITERATION {i}>\n" + prompt + "\n\n")
+                f.write(f"optimized_prompt_{i}\t{prompt}\n")
         
         # Return path to folder of generated images
         return folder_name

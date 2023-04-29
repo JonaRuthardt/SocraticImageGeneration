@@ -1,6 +1,7 @@
 import os, sys
 from PIL import Image
 import enum
+import torch
 from transformers import BlipProcessor, BlipForConditionalGeneration
 
 class CaptioningModelType(enum.Enum):
@@ -17,8 +18,8 @@ def load_captioning_model(**kwargs):
         CaptioningModel: instanciated and configured captioning model sub-class
     """
 
-    model_name = kwargs.get('model_name', 'blip_large')
-    if model_name == 'blip_large':
+    model_name = kwargs.get('model_name', CaptioningModelType.BLIP_LARGE.value)
+    if model_name == CaptioningModelType.BLIP_LARGE.value:
         captioning_model = BlipLarge(**kwargs)
     else:
         raise ValueError(f"Unknown captioning model {model_name}")
@@ -31,7 +32,18 @@ class CaptioningModel:
     """
 
     def __init__(self, **kwargs):
-        self.model_name = kwargs["model_name"]
+        self.__model_name = kwargs["model_name"]
+
+    @property
+    def model_name(self):
+        return self.__model_name
+    
+    @property
+    def device(self) -> torch.device:
+        """
+        Get current model's device.
+        """
+        return self.model.device('cpu')
 
     def generate_caption(self, image: Image, cap_text: str = '') -> str:
         """

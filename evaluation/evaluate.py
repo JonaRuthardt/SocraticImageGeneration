@@ -26,9 +26,10 @@ class Evaluate():
         """
         Load prompts from given prompt-specific folder containing generated images
         """
-        with open(os.path.join(folder, "prompts.txt"), "r") as f:
+        with open(os.path.join(folder, "prompts.csv"), "r") as f:
             prompts = f.read().splitlines()
-            prompts = [p for p in prompts if p != "" and p[0] != "<"]
+            prompts = [p.split("\t")[-1] for p in prompts]
+
         return prompts
     
     def evaluate(self):
@@ -41,7 +42,7 @@ class Evaluate():
         """
         Save evaluation results to file
         """
-        raise NotImplementedError
+        pass
         
 class CLIPScore(Evaluate):
     """
@@ -98,6 +99,13 @@ class CLIPScore(Evaluate):
                     "image_path": os.path.join(prompt_folder, f"image_{image_idx}.png"),
                 }
                 self.results_df = self.results_df.append(df_row)
+
+    def save_results(self):
+        """
+        Save evaluation results to file
+        """
+        self.results_df.to_csv(os.path.join(self.experiment_folder, "results_clipscore.csv"), index=False)
+        
 
 
         # Analyze results and obtain ultimate quantitative scores
