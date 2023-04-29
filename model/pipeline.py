@@ -29,7 +29,16 @@ class Pipeline:
         self.path = os.path.join("data/results", experiment_name)
         os.makedirs(self.path, exist_ok=False)
         with open(os.path.join(self.path, "hyperparameters.json"), "w") as f:
-            json.dump(self.hyperparameters, f)
+            def convert_dict2str(dict):
+                new_dict = {}
+                for key, values in dict.items():
+                    if type(values) == type(dict):
+                        new_dict[key] = convert_dict2str(values)
+                    else:
+                        new_dict[key] = str(values)
+                return new_dict
+                
+            json.dump(convert_dict2str(self.hyperparameters), f, sort_keys=True, indent=4)
 
         self.dataset = kwargs.get('dataset',{}).get("dataset", None)
         if self.dataset is not None:
@@ -44,7 +53,7 @@ class Pipeline:
             
             # Execute dataset-based experiment pipeline
             #TODO do we always directly want to execute it here or implement running the experiments outside of the pipeline?
-            self.generate_images_from_dataset(max_cycles=kwargs["max_cycles"])
+            self.generate_images_from_dataset(max_cycles=kwargs["pipeline"]["max_cycles"])
 
     def generate_image(self, user_prompt: str, max_cycles: int = 5):
         """
