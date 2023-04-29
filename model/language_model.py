@@ -2,7 +2,6 @@ import os, sys
 import enum
 import openai
 
-
 class LanguageModelType(enum.Enum):
     chat_gpt = "chat_gpt"
 
@@ -169,6 +168,7 @@ class ChatGPT(LanguageModel):
         self.api_key = kwargs.get("api_key", "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")
         self.token_usage = 0
         self.role = self.load_template(kwargs.get("role", "config/templates/model_role.txt"))
+        openai.api_key = self.api_key
 
     def get_language_prompt(self, user_prompt: str, image_caption: str, previous_prompts: list = []):
         """
