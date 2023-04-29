@@ -124,7 +124,8 @@ class StableDiffuser(ImageGenerator):
     def __reset_generator(self):
         self.__generator = torch.Generator(self.__model.device).manual_seed(self.__seed) 
 
-    def generate_image(self, prompt: str, height:int=512, width:int=512) -> Image:
+    def generate_image(self, prompt: str, num_inference_steps:int=50, guidance_scale:float=7.5,
+                       height:int=512, width:int=512, **kwargs) -> Image:
         """
         Generate image given prompt
 
@@ -135,7 +136,12 @@ class StableDiffuser(ImageGenerator):
         Returns:
             PIL.Image: generated image
         """
-        image = self.__model(prompt, generator=self.__generator, height=height, width=width).images[0]
+        image = self.__model(prompt, 
+                        generator=self.__generator,
+                        num_inference_steps=num_inference_steps,
+                        guidance_scale=guidance_scale, 
+                        height=height, 
+                        width=width).images[0]
         return image
 
     def to(self, torch_device: Optional[Union[str, torch.device]]=None) -> torch.device:
