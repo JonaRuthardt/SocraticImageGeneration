@@ -45,7 +45,7 @@ class CaptioningModel:
         """
         Get current model's device.
         """
-        return self.model.device('cpu')
+        return self.model.device
 
     def generate_caption(self, image: Image, cap_text: str = '') -> str:
         """
@@ -75,7 +75,7 @@ class BlipLarge(CaptioningModel):
         super().__init__(**kwargs)
 
         self.processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large")
-        self.model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large")
+        self.model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large").to(kwargs["device_map"])
 
     def generate_caption(self, image: Image, cap_text: str = ''):
         """
@@ -88,11 +88,11 @@ class BlipLarge(CaptioningModel):
             str: generated caption
         """
         if cap_text:
-            inputs = self.processor(image, cap_text, return_tensors="pt")
+            inputs = self.processor(image, cap_text, return_tensors="pt").to(self.device)
         else:
-            inputs = self.processor(image, return_tensors="pt")
+            inputs = self.processor(image, return_tensors="pt").to(self.device)
         
-        out = self.model.generate(**inputs)
+        out = self.model.generate(**inputs, max_new_tokens=100)
         caption = self.processor.decode(out[0], skip_special_tokens=True)
 
         return caption

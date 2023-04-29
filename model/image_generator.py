@@ -105,7 +105,7 @@ class StableDiffuser(ImageGenerator):
         #   this case is text as well as overall sample quality. In simple terms classifier free guidance 
         #   forces the generation to better match with the prompt. Numbers like 7 or 8.5 give good results, 
         #   if you use a very large number the images might look good, but will be less diverse.
-        self.__model = StableDiffusionPipeline.from_pretrained(model, 
+        self.__model = StableDiffusionPipeline.from_pretrained(model, safety_checker = None,
                                                                 torch_dtype=torch_dtype)
         self.__model = self.__model.to(device_map)
         self.__seed = seed

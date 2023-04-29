@@ -22,10 +22,10 @@ def load_language_model(**kwargs):
 
     # TODO instanciate language model sub-class from given model name
 
-    model_name = kwargs.get('model_name', 'chat_gpt')
-    if model_name == 'chat_gpt':
+    model_name = kwargs.get('language_model', LanguageModelType.chat_gpt.value)
+    if model_name == LanguageModelType.chat_gpt.value:
         language_model = ChatGPT(**kwargs)
-    elif model_name == 'davinci_003':
+    elif model_name == LanguageModelType.davinci_003.value:
         language_model = Davinci003(**kwargs)
     else:
         raise ValueError(f"Unknown language model {model_name}")
@@ -231,7 +231,7 @@ class ChatGPT(LanguageModel):
             str: generated text
         """
         generated_prompt = openai.ChatCompletion.create(
-            model="gpt-4",
+            model="gpt-3.5-turbo",
             messages=prompt)
 
         self.token_usage += generated_prompt['usage']['total_tokens']
@@ -244,91 +244,6 @@ class ChatGPT(LanguageModel):
         """
         pass
 
-<<<<<<< HEAD
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-class Cerebras1B(LanguageModel):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-        self.tokenizer = AutoTokenizer.from_pretrained("cerebras/Cerebras-GPT-1.3B")
-        self.model = AutoModelForCausalLM.from_pretrained("cerebras/Cerebras-GPT-1.3B").to("cuda")
-        self.pipeline = pipeline("text-generation", model=self.model, tokenizer=self.tokenizer, device=0)
-=======
 class Davinci003(LanguageModel):
     """
     Wrapper for OpenAI ChatGPT API
@@ -378,7 +293,6 @@ class Davinci003(LanguageModel):
         prompt = prompt.replace("<IMAGE_CAPTION>", image_caption)
 
         return prompt
->>>>>>> 5916e254c1ba7f7c317188fd1a331e49c8752ca3
 
     def query_language_model(self, prompt: str):
         """
@@ -389,12 +303,6 @@ class Davinci003(LanguageModel):
         Returns:
             str: generated text
         """
-
-<<<<<<< HEAD
-        generated_text = self.pipeline(prompt, max_length=150, do_sample=False, no_repeat_ngram_size=2)[0]
-
-        return generated_text['generated_text']
-=======
         generated_prompt = openai.Completion.create(engine='text-davinci-003', prompt=prompt, stop='.')
 
         self.token_usage += generated_prompt['usage']['total_tokens']
@@ -406,4 +314,28 @@ class Davinci003(LanguageModel):
         Optional method to reset model between generations
         """
         pass
->>>>>>> 5916e254c1ba7f7c317188fd1a331e49c8752ca3
+
+
+
+
+class Cerebras1B(LanguageModel):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        self.tokenizer = AutoTokenizer.from_pretrained("cerebras/Cerebras-GPT-1.3B")
+        self.model = AutoModelForCausalLM.from_pretrained("cerebras/Cerebras-GPT-1.3B").to("cuda")
+        self.pipeline = pipeline("text-generation", model=self.model, tokenizer=self.tokenizer, device=0)
+
+    def query_language_model(self, prompt: str):
+        """
+        Query language model with prompt
+
+        Parameters:
+            prompt (str): prompt to query language model with
+        Returns:
+            str: generated text
+        """
+
+        generated_text = self.pipeline(prompt, max_length=150, do_sample=False, no_repeat_ngram_size=2)[0]
+
+        return generated_text['generated_text']

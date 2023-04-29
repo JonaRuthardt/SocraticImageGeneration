@@ -1,6 +1,7 @@
 import os, sys
 import random
 import json
+import time
 
 import datasets
 
@@ -43,7 +44,7 @@ class Pipeline:
             
             # Execute dataset-based experiment pipeline
             #TODO do we always directly want to execute it here or implement running the experiments outside of the pipeline?
-            self.generate_images_from_dataset()
+            self.generate_images_from_dataset(max_cycles=kwargs["max_cycles"])
 
     def generate_image(self, user_prompt: str, max_cycles: int = 5):
         """
@@ -64,13 +65,18 @@ class Pipeline:
 
         # Generate image
         prompt = user_prompt
+        captions = []
         previous_prompts = []
+
+        # Generate and save image for original user prompt
+        image = self.image_generator.generate_image(prompt)
+        image.save(os.path.join(folder_name, f"image_{0}.png"))
+
         for i in range(max_cycles):
-            # Generate image
-            image = self.image_generator.generate_image(prompt)
 
             # Generate caption
             caption = self.image_captioning.generate_caption(image)
+            captions.append(caption)
 
             # Check termnation condition
             if self.terminate_on_similarity and self.language_model.check_similarity(prompt, caption):
@@ -80,16 +86,18 @@ class Pipeline:
             prompt = self.language_model.generate_optimized_prompt(user_prompt, caption, previous_prompts)
             previous_prompts.append(prompt)
 
-            # Save image and caption
-            image.save(os.path.join(folder_name, f"image_{i}.png"))
-            with open(os.path.join(folder_name, f"caption_{i}.txt"), "w") as f:
-                f.write(caption)
-            
-        # Store intermediate and final prompts
+            # Generate and save image for optimized prompt
+            image = self.image_generator.generate_image(prompt)
+            image.save(os.path.join(folder_name, f"image_{i+1}.png"))
+
+        # Store intermediate and final prompts and captions
         with open(os.path.join(folder_name, "prompts.csv"), "w") as f:
             f.write(f"user_prompt\t{user_prompt}\n")
             for i, prompt in enumerate(previous_prompts):
-                f.write(f"optimized_prompt_{i}\t{prompt}\n")
+                f.write(f"optimized_prompt_{i}\t"+prompt+"\n")
+        with open(os.path.join(folder_name, f"captions.csv"), "w") as f:
+            for i, caption in enumerate(captions):
+                f.write(f"{i}\t{caption}\n")
         
         # Return path to folder of generated images
         return folder_name
@@ -99,9 +107,11 @@ class Pipeline:
         Generate images based on prompts from dataset
         """
 
-        for prompt in self.dataset:
+        for i, prompt in enumerate(self.dataset):
+            start = time.time()
             self.generate_image(prompt, max_cycles=max_cycles)
             self.reset_pipeline()
+            print(f"Time for prompt {i}: {round(time.time() - start, 2)}s")
     
     def reset_pipeline(self):
         """
