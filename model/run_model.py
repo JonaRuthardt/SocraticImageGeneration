@@ -13,6 +13,7 @@ def main():
     parser.add_argument('--experiment_name', default='default-experiment', type=str, help='Name of experiment')
     parser.add_argument('--max_cycles', default=5, type=int, help='Maximum number of times to optimize prompt and generate image')
     parser.add_argument('--terminate_on_similarity', default=False, type=bool, help="Whether to terminate the generation process when the language model regards the generated image and the original prompt as similar enough")
+    parser.add_argument('--device_map', default="cuda", type=str, help="Device to run models on")
     
     # Dataset
     parser.add_argument('--dataset', default=None, type=str, choices=[d.value for d in DatasetType], help='Dataset to get prompts from')

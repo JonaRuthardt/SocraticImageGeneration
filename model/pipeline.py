@@ -26,7 +26,7 @@ class Pipeline:
         self.image_id = 0
         experiment_name = kwargs.get("experiment_name", "default-experiment")
         self.path = os.path.join("data/results", experiment_name)
-        os.mkdir(self.path, exist_ok=False)
+        os.makedirs(self.path, exist_ok=False)
         with open(os.path.join(self.path, "hyperparameters.json"), "w") as f:
             json.dump(self.hyperparameters, f)
 
@@ -34,7 +34,7 @@ class Pipeline:
         if self.dataset is not None:
             # Load and configure dataset
             if self.dataset == "parti-prompts":
-                self.dataset = datasets.load_dataset("parti_prompts", split="train")["Prompt"]
+                self.dataset = datasets.load_dataset("nateraw/parti-prompts", split="train")["Prompt"]
             elif self.dataset == "flickr30k":
                 dataset = datasets.load_dataset("embedding-data/flickr30k-captions", split="train")
                 self.dataset = [d[0] for d in dataset["set"]]
@@ -59,7 +59,7 @@ class Pipeline:
         # Set up folder to store generated images
         folder_name = str(self.image_id).zfill(6)
         folder_name = os.path.join(self.path, folder_name)
-        os.mkdir(folder_name, exist_ok=False)
+        os.makedirs(folder_name, exist_ok=False)
         self.image_id += 1
 
         # Generate image

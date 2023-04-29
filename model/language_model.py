@@ -16,6 +16,7 @@ def load_language_model(**kwargs):
     Returns:
         LanguageModel: instanciated and configured language model sub-class
     """
+    print("Loading language model")
 
     # TODO instanciate language model sub-class from given model name
 

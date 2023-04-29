@@ -17,8 +17,10 @@ def load_captioning_model(**kwargs):
     Returns:
         CaptioningModel: instanciated and configured captioning model sub-class
     """
+    print("Loading captioning model")
 
     model_name = kwargs.get('model_name', CaptioningModelType.BLIP_LARGE.value)
+    kwargs["model_name"] = model_name
     if model_name == CaptioningModelType.BLIP_LARGE.value:
         captioning_model = BlipLarge(**kwargs)
     else:
@@ -69,8 +71,8 @@ class BlipLarge(CaptioningModel):
     """
     Blip-based image captioning model
     """
-    def __init__(self):
-        super().__init__('blip_large')
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
         self.processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large")
         self.model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-large")
