@@ -1,9 +1,10 @@
 import argparse
-from pipeline import Pipeline
-from image_generator import ImageGeneratorType
-from image_captioning import CaptioningModelType
-from language_model import LanguageModelType
-from data import DatasetType
+from model.pipeline import Pipeline
+from model.image_generator import ImageGeneratorType
+from model.image_captioning import CaptioningModelType
+from model.language_model import LanguageModelType
+
+from data.data import DatasetType
 
 def main():
     parser = argparse.ArgumentParser()
@@ -19,15 +20,15 @@ def main():
     #TODO add dataset-specific arguments
 
     # Image generator
-    parser.add_argument('--image_generator', default=ImageGeneratorType.StableDiffusion.value, type=str, choices=[m.value for m in ImageGeneratorType], help='Image generator model')
+    parser.add_argument('--image_generator', default=ImageGeneratorType.StableDiffusionV2_1.value, type=str, choices=[m.value for m in ImageGeneratorType], help='Image generator model')
     #TODO add image generator-specific arguments
 
     # Image captioning
-    parser.add_argument('--image_captioning', default=CaptioningModelType.ClipCap.value, type=str, choices=[m.value for m in CaptioningModelType], help='Image captioning model')
+    parser.add_argument('--image_captioning', default=CaptioningModelType.BLIP_LARGE.value, type=str, choices=[m.value for m in CaptioningModelType], help='Image captioning model')
     #TODO add image captioning-specific arguments
 
     # Language model
-    parser.add_argument('--language_model', default=LanguageModelType.GPT3.value, type=str, choices=[m.value for m in LanguageModelType], help='Language model')
+    parser.add_argument('--language_model', default=LanguageModelType.chat_gpt.value, type=str, choices=[m.value for m in LanguageModelType], help='Language model')
     #TODO add language model-specific arguments
                         
     args = parser.parse_args()
