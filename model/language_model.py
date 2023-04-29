@@ -50,12 +50,13 @@ class LanguageModel():
             bool: True if caption is sufficiently similar to user prompt, False otherwise
         """
 
-        #TODO given prompt and caption and pre-defined template ("Does caption XXX sufficiently describe YYY?"), check if yes or no is more likely
+        similarity_prompt = self.get_similarity_prompt(user_prompt, image_caption)
+        similarity_response = self.query_language_model(similarity_prompt)
+        print(similarity_response)
 
-        #TODO might be required to be implemented in subclass to have access to language model token probabilities
+        return 1 if "Yes" in similarity_response else 0
 
-        pass
-    
+
     def generate_optimized_prompt(self, user_prompt: str, image_caption: str, previous_prompts: list = []):
         """
         Generate optimized prompt given original user prompt, image caption, and possibly previous prompts
@@ -182,10 +183,7 @@ class ChatGPT(LanguageModel):
             str: prompt for language model
         """
 
-        message = []
-
-        message.append({"role": "system",
-                            "content": self.role})
+        message = [{"role": "system", "content": self.role}]
 
         # Replace <USER_PROMPT> in template with user prompt
         prompt = self.template.replace("<USER_PROMPT>", user_prompt)
@@ -195,7 +193,28 @@ class ChatGPT(LanguageModel):
         message.append({"role": "user", "content": prompt})
 
         return message
-    
+
+    def get_similarity_prompt(self, user_prompt: str, image_caption: str):
+        """
+        Generate similarity prompt given original user prompt and image caption
+
+        Parameters:
+            user_prompt (str): user prompt
+            image_caption (str): image caption
+        Returns:
+            str: prompt for similarity check
+        """
+        message = [{"role": "system", "content": self.role}]
+
+        # Replace <USER_PROMPT> in template with user prompt
+        prompt = self.similarity_template.replace("<USER_PROMPT>", user_prompt)
+        # Replace <IMAGE_CAPTION> in template with image caption
+        prompt = prompt.replace("<IMAGE_CAPTION>", image_caption)
+
+        message.append({"role": "user", "content": prompt})
+
+        return message
+
     def query_language_model(self, prompt: str):
         """
         Query language model with prompt
