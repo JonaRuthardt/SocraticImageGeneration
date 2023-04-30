@@ -3,6 +3,7 @@ import enum
 import openai
 from transformers import pipeline
 from transformers import AutoTokenizer, AutoModelForCausalLM
+import time
 
 class LanguageModelType(enum.Enum):
     chat_gpt = "chat_gpt"
@@ -233,9 +234,20 @@ class ChatGPT(LanguageModel):
         Returns:
             str: generated text
         """
-        generated_prompt = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=prompt)
+        error_counter = 0
+        while True:
+            try:
+                generated_prompt = openai.ChatCompletion.create(
+                    model="gpt-3.5-turbo",
+                    messages=prompt)
+                break
+            except Exception as e:
+                print(f"Encountered OpenAI exception {e}")
+                if error_counter > 5:
+                    raise e
+                else:
+                    time.sleep(60)
+                error_counter += 1
 
         self.token_usage += generated_prompt['usage']['total_tokens']
 

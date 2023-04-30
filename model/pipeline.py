@@ -27,7 +27,7 @@ class Pipeline:
         self.image_id = 0
         experiment_name = kwargs.get('pipeline',{}).get("experiment_name", "default-experiment")
         self.path = os.path.join("data/results", experiment_name)
-        os.makedirs(self.path, exist_ok=False)
+        os.makedirs(self.path, exist_ok=True)
         with open(os.path.join(self.path, "hyperparameters.json"), "w") as f:
             def convert_dict2str(dict):
                 new_dict = {}
@@ -69,8 +69,8 @@ class Pipeline:
         # Set up folder to store generated images
         folder_name = str(self.image_id).zfill(6)
         folder_name = os.path.join(self.path, folder_name)
-        os.makedirs(folder_name, exist_ok=False)
         self.image_id += 1
+        os.makedirs(folder_name, exist_ok=False)
 
         # Generate image
         prompt = user_prompt
@@ -118,7 +118,12 @@ class Pipeline:
 
         for i, prompt in enumerate(self.dataset):
             start = time.time()
-            self.generate_image(prompt, max_cycles=max_cycles)
+            try:
+                self.generate_image(prompt, max_cycles=max_cycles)
+            except OSError:
+                # image was already generated
+                #TODO remove or implement nicer
+                pass
             self.reset_pipeline()
             print(f"Time for prompt {i}: {round(time.time() - start, 2)}s")
     
