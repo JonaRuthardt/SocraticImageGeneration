@@ -92,7 +92,7 @@ class BlipLarge(CaptioningModel):
         else:
             inputs = self.processor(image, return_tensors="pt").to(self.device)
         
-        out = self.model.generate(**inputs, max_new_tokens=100)
+        out = self.model.generate(**inputs, max_new_tokens=150)
         caption = self.processor.decode(out[0], skip_special_tokens=True)
 
         return caption

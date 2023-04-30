@@ -100,13 +100,13 @@ class Pipeline:
             image.save(os.path.join(folder_name, f"image_{i+1}.png"))
 
         # Store intermediate and final prompts and captions
-        with open(os.path.join(folder_name, "prompts.csv"), "w") as f:
-            f.write(f"user_prompt\t{user_prompt}\n")
+        with open(os.path.join(folder_name, "prompts.csv"), "wb") as f:
+            f.write(f"user_prompt\t{user_prompt}\n".encode("utf-8", errors="replace"))
             for i, prompt in enumerate(previous_prompts):
-                f.write(f"optimized_prompt_{i}\t"+prompt+"\n")
-        with open(os.path.join(folder_name, f"captions.csv"), "w") as f:
+                f.write(f"optimized_prompt_{i}\t{prompt}\n".encode("utf-8", errors="replace"))
+        with open(os.path.join(folder_name, f"captions.csv"), "wb") as f:
             for i, caption in enumerate(captions):
-                f.write(f"{i}\t{caption}\n")
+                f.write(f"{i}\t{caption}\n".encode("utf-8", errors="replace"))
         
         # Return path to folder of generated images
         return folder_name

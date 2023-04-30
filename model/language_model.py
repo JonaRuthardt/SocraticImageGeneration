@@ -7,6 +7,7 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 class LanguageModelType(enum.Enum):
     chat_gpt = "chat_gpt"
     davinci_003 = "davinci-003"
+    Cerebras1B = "Cerebras1B"
 
 def load_language_model(**kwargs):
     """
@@ -27,6 +28,8 @@ def load_language_model(**kwargs):
         language_model = ChatGPT(**kwargs)
     elif model_name == LanguageModelType.davinci_003.value:
         language_model = Davinci003(**kwargs)
+    elif model_name == LanguageModelType.Cerebras1B.value:
+        language_model = Cerebras1B(**kwargs)
     else:
         raise ValueError(f"Unknown language model {model_name}")
 
@@ -316,8 +319,6 @@ class Davinci003(LanguageModel):
         pass
 
 
-
-
 class Cerebras1B(LanguageModel):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -336,6 +337,6 @@ class Cerebras1B(LanguageModel):
             str: generated text
         """
 
-        generated_text = self.pipeline(prompt, max_length=150, do_sample=False, no_repeat_ngram_size=2)[0]
+        generated_text = self.pipeline(prompt, max_length=500, do_sample=False, no_repeat_ngram_size=2)[0]
 
         return generated_text['generated_text']
