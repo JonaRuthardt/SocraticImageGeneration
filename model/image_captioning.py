@@ -28,7 +28,7 @@ class CaptioningModel:
         self.processor = BlipProcessor.from_pretrained(model_name)
         self.model = BlipForConditionalGeneration.from_pretrained(model_name)
     
-    def generate_caption(self, image: Image, cap_text: str = ''): # 
+    def generate_caption(self, image: Image, cap_text: str = ''):
         """
         Generate caption for image
 
