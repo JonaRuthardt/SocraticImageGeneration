@@ -42,6 +42,9 @@ def main():
     # Language model
     p5 = main_parser.add_parser('language_model')
     p5.add_argument('--model', default=LanguageModelType.chat_gpt.value, type=str, choices=[m.value for m in LanguageModelType], help='Language model')
+    p5.add_argument('--template', default='config/templates/default_template.txt', type=str, help='Path to template to use for language model')
+    p5.add_argument('--system_prompt', default='config/templates/model_role.txt', type=str, help='Path to system prompt to use for language model')
+    p5.add_argument('--similarity_template', default='config/templates/default_similarity_template.txt', type=str, help='Path to template to use for similarity check')
     #TODO add language model-specific arguments
                         
     args = main_parser.parse_args()
