@@ -1,0 +1,17 @@
+#!/bin/bash
+
+#SBATCH --partition=shared
+#SBATCH --gres=gpu:0
+#SBATCH --job-name=Evaluation
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --time=02:00:00
+#SBATCH --mem=32G
+#SBATCH --output=evaluation_%A.out
+
+module purge
+module load 2022
+module load Anaconda3/2022.05
+source activate DL2
+
+srun python -m evaluation.evaluate --experiment_name evaluation1

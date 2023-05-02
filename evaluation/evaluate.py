@@ -129,7 +129,7 @@ class CLIPScore(Evaluate):
         Save evaluation results to file
         """
         self.results_df = pd.DataFrame.from_dict(self.result_dict)
-        self.results_df.to_csv(os.path.join(self.experiment_folder, "results_clipscore.csv"), index=False, sep="\t")
+        self.results_df.to_csv(os.path.join(self.experiment_folder, "results_clipscore.tsv"), index=False, sep="\t")
         
 if __name__ == "__main__":
 
