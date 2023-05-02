@@ -9,6 +9,7 @@ from model.language_model import load_language_model
 from model.image_generator import load_image_generator
 from model.image_captioning import load_captioning_model
 
+random.seed(42)
 
 class Pipeline:
     def __init__(self, **kwargs):
@@ -45,6 +46,9 @@ class Pipeline:
             # Load and configure dataset
             if self.dataset == "parti-prompts":
                 self.dataset = datasets.load_dataset("nateraw/parti-prompts", split="train")["Prompt"]
+            elif self.dataset == "parti-prompts-small":
+                self.dataset = datasets.load_dataset("nateraw/parti-prompts", split="train")["Prompt"]
+                self.dataset = [self.dataset[i] for i in range(0, len(self.dataset), len(self.dataset)//50)]
             elif self.dataset == "flickr30k":
                 dataset = datasets.load_dataset("embedding-data/flickr30k-captions", split="train")
                 self.dataset = [d[0] for d in dataset["set"]]
@@ -54,6 +58,9 @@ class Pipeline:
             # Execute dataset-based experiment pipeline
             #TODO do we always directly want to execute it here or implement running the experiments outside of the pipeline?
             self.generate_images_from_dataset(max_cycles=kwargs["pipeline"]["max_cycles"])
+        elif kwargs.get('pipeline',{}).get("prompt", None) is not None:
+            # Execute single prompt experiment pipeline
+            self.generate_image(kwargs["pipeline"]["prompt"], max_cycles=kwargs["pipeline"]["max_cycles"])
 
     def generate_image(self, user_prompt: str, max_cycles: int = 5):
         """

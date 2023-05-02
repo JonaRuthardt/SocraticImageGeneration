@@ -4,6 +4,7 @@ import enum
 class DatasetType(enum.Enum):
     Flickr30k = "flickr30k"
     PartiPrompts = "parti-prompts"
+    PartiPromptsSmall = "parti-prompts-small"
     #TODO specify all available datasets here
 
 def load_data_loader(dataset: str, **kwargs):
