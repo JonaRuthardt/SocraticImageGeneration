@@ -1,0 +1,3 @@
+Caption of generated image: <IMAGE_CAPTION>
+Original user prompt: <USER_PROMPT>
+Improved prompt for AI image generation model that produces an image that is more in line with the user's intent:
