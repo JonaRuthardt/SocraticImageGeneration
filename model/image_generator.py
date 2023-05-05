@@ -93,10 +93,14 @@ class StableDiffuser(ImageGenerator):
     Diffusers class as image generators
     """
     def __init__(self, model: str,  
-                 device_map: Optional[Union[str, torch.device]]=None, 
-                 torch_dtype:str|torch.dtype=torch.float16, 
-                 seed:int=None, 
-                 **kwargs):
+                device_map: Optional[Union[str, torch.device]]=None, 
+                torch_dtype:str|torch.dtype=torch.float16, 
+                seed:int=None,
+                num_inference_steps:int=50, 
+                guidance_scale:float=7.5,
+                height:int=512, 
+                width:int=512,
+                **kwargs):
         ImageGenerator.__init__(self,model)
         ### Other Parameters of the Diffusers to keep in mind ###
         # 1) num_inference_steps : (default=50) --> results are better the more steps you use but becomes slower
@@ -104,6 +108,11 @@ class StableDiffuser(ImageGenerator):
         #   this case is text as well as overall sample quality. In simple terms classifier free guidance 
         #   forces the generation to better match with the prompt. Numbers like 7 or 8.5 give good results, 
         #   if you use a very large number the images might look good, but will be less diverse.
+        self.__num_inference_steps = num_inference_steps
+        self.__guidance_scale = guidance_scale
+        self.__height = height
+        self.__width = width
+
         self.__model = StableDiffusionPipeline.from_pretrained(model, safety_checker = None,
                                                                 torch_dtype=torch_dtype)
         self.__model = self.__model.to(device_map)
@@ -126,8 +135,8 @@ class StableDiffuser(ImageGenerator):
     def __reset_generator(self):
         self.__generator = torch.Generator(self.__model.device).manual_seed(self.__seed) 
 
-    def generate_image(self, prompt: str, num_inference_steps:int=50, guidance_scale:float=7.5,
-                       height:int=512, width:int=512, **kwargs) -> Image:
+    def generate_image(self, prompt: str, num_inference_steps:int=None, guidance_scale:float=None,
+                       height:int=None, width:int=None, **kwargs) -> Image:
         """
         Generate image given prompt
 
@@ -138,6 +147,12 @@ class StableDiffuser(ImageGenerator):
         Returns:
             PIL.Image: generated image
         """
+
+        num_inference_steps = num_inference_steps if num_inference_steps is not None else self.__num_inference_steps
+        guidance_scale = guidance_scale if guidance_scale is not None else self.__guidance_scale
+        height = height if height is not None else self.__height
+        width = width if width is not None else self.__width
+
         image = self.__model(prompt, 
                         generator=self.__generator,
                         num_inference_steps=num_inference_steps,

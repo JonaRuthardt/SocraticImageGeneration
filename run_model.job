@@ -14,4 +14,8 @@ module load 2022
 module load Anaconda3/2022.05
 source activate DL2
 
-srun python -m model.run_model pipeline --experiment_name evaluation1 dataset --dataset parti-prompts
+#srun python -m model.run_model pipeline --experiment_name evaluation1 dataset --dataset parti-prompts
+srun python -m model.run_model pipeline --experiment_name dataset_test_parti_gs_10 image_generator --guidance_scale 10 dataset --dataset parti-prompts-small language_model --template config/templates/chatgpt_template_V1.txt --system_prompt config/templates/chatgpt_system_prompt_V1.txt 
+srun python -m model.run_model pipeline --experiment_name dataset_test_flickr_gs_10 image_generator --guidance_scale 10 dataset --dataset flickr30k-small language_model --template config/templates/chatgpt_template_V1.txt --system_prompt config/templates/chatgpt_system_prompt_V1.txt    
+srun python -m model.run_model pipeline --experiment_name dataset_test_coco_gs_10 image_generator --guidance_scale 10 dataset --dataset cococaption-small language_model --template config/templates/chatgpt_template_V1.txt --system_prompt config/templates/chatgpt_system_prompt_V1.txt    
+# srun python -m model.run_model pipeline --experiment_name dataset_test_coco dataset --dataset cococaption-small language_model --template config/templates/chatgpt_template_V1.txt --system_prompt config/templates/chatgpt_system_prompt_V1.txt    

@@ -52,6 +52,14 @@ class Pipeline:
             elif self.dataset == "flickr30k":
                 dataset = datasets.load_dataset("embedding-data/flickr30k-captions", split="train")
                 self.dataset = [d[0] for d in dataset["set"]]
+            elif self.dataset == "flickr30k-small":
+                dataset = datasets.load_dataset("embedding-data/flickr30k-captions", split="train")
+                self.dataset = [d[0] for d in dataset["set"]]
+                self.dataset = [self.dataset[i] for i in random.sample(range(len(self.dataset)), 50)]
+            elif self.dataset == "cococaption-small":
+                dataset = datasets.load_dataset("embedding-data/coco_captions_quintets", split="train")
+                self.dataset = [d[0] for d in dataset["set"]]
+                self.dataset = [self.dataset[i] for i in random.sample(range(len(self.dataset)), 50)]
             else:
                 raise ValueError(f"Unknown dataset {self.dataset}")
             
