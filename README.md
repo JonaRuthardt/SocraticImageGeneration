@@ -1,6 +1,9 @@
 # SocraticImageGeneration
 Optimizing image generation using the notion of Socratic Models
 
+Code is available [here](https://github.com/JonaRuthardt/SocraticImageGeneration)
+TODO make repo public
+
 ## Installation
 
 Conda environment (via yml?)

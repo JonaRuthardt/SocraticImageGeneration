@@ -1,5 +1,6 @@
 # Custom
 data/results/
+data/datasets/
 *.out
 
 # Byte-compiled / optimized / DLL files

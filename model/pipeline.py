@@ -2,6 +2,7 @@ import os, sys
 import random
 import json
 import time
+import pandas as pd
 
 import datasets
 
@@ -57,9 +58,14 @@ class Pipeline:
                 self.dataset = [d[0] for d in dataset["set"]]
                 self.dataset = [self.dataset[i] for i in random.sample(range(len(self.dataset)), 50)]
             elif self.dataset == "cococaption-small":
-                dataset = datasets.load_dataset("embedding-data/coco_captions_quintets", split="train")
-                self.dataset = [d[0] for d in dataset["set"]]
-                self.dataset = [self.dataset[i] for i in random.sample(range(len(self.dataset)), 50)]
+                annotations = pd.read_csv("data/datasets/coco-small/annotations.tsv", sep="\t")
+                self.dataset = annotations["caption 1"].tolist()
+            elif self.dataset == "cococaption-medium":
+                annotations = pd.read_csv("data/datasets/coco-medium/annotations.tsv", sep="\t")
+                self.dataset = annotations["caption 1"].tolist()
+            elif self.dataset == "cococaption-large":
+                annotations = pd.read_csv("data/datasets/coco-large/annotations.tsv", sep="\t")
+                self.dataset = annotations["caption 1"].tolist()
             else:
                 raise ValueError(f"Unknown dataset {self.dataset}")
             
