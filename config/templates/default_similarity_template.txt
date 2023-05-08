@@ -1,4 +1,4 @@
-Decide if these descriptions are similar enough. Your answer should be ONLY ONE word: 'Yes' or 'No'.
+Decide if User prompt and Caption of generated image are similar enough. Your answer should be ONLY ONE word: 'Yes' or 'No'.
 User prompt: <USER_PROMPT>
 Caption of generated image: <IMAGE_CAPTION>
 Answer:

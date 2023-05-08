@@ -94,9 +94,11 @@ class Pipeline:
         os.makedirs(folder_name, exist_ok=False)
 
         # Generate image
+        original_prompt = user_prompt
         prompt = user_prompt
         captions = []
         previous_prompts = []
+        terminated = False
 
         # Generate and save image for original user prompt
         image = self.image_generator.generate_image(prompt)
@@ -108,8 +110,9 @@ class Pipeline:
             caption = self.image_captioning.generate_caption(image)
             captions.append(caption)
 
-            # Check termnation condition
-            if self.terminate_on_similarity and self.language_model.check_similarity(prompt, caption):
+            # Check termination condition
+            if self.terminate_on_similarity and self.language_model.check_similarity(original_prompt, caption):
+                terminated = True
                 break
 
             # Optimize prompt
@@ -128,6 +131,8 @@ class Pipeline:
         with open(os.path.join(folder_name, f"captions.csv"), "wb") as f:
             for i, caption in enumerate(captions):
                 f.write(f"{i}\t{caption}\n".encode("utf-8", errors="replace"))
+        with open(os.path.join(folder_name, f"terminated.csv"), "wb") as f:
+            f.write(f"terminated:\t{terminated}\n".encode("utf-8", errors="replace"))
         
         # Return path to folder of generated images
         return folder_name

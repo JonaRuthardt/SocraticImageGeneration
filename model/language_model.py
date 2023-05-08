@@ -61,7 +61,6 @@ class LanguageModel():
 
         similarity_prompt = self.get_similarity_prompt(user_prompt, image_caption)
         similarity_response = self.query_language_model(similarity_prompt)
-        print(similarity_response)
 
         return 1 if "Yes" in similarity_response else 0
 
@@ -178,6 +177,7 @@ class ChatGPT(LanguageModel):
         self.api_key = kwargs.get("api_key", "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")
         self.token_usage = 0
         self.role = self.load_template(kwargs.get("system_prompt", "config/templates/model_role.txt"))
+        self.similarity_role = self.load_template(kwargs.get("system_sim_prompt", "config/templates/model_role_similarity.txt"))
         openai.api_key = self.api_key
 
     def get_language_prompt(self, user_prompt: str, image_caption: str, previous_prompts: list = []):
@@ -214,7 +214,7 @@ class ChatGPT(LanguageModel):
         Returns:
             str: prompt for similarity check
         """
-        message = [{"role": "system", "content": self.role}]
+        message = [{"role": "system", "content": self.similarity_role}]
 
         # Replace <USER_PROMPT> in template with user prompt
         prompt = self.similarity_template.replace("<USER_PROMPT>", user_prompt)
