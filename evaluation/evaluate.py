@@ -5,8 +5,10 @@ from tqdm import tqdm
 
 import pandas as pd
 import torch
+from torchvision import models, transforms
 from PIL import Image
 import open_clip
+from scipy.spatial import distance
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -130,7 +132,59 @@ class CLIPScore(Evaluate):
         """
         self.results_df = pd.DataFrame.from_dict(self.result_dict)
         self.results_df.to_csv(os.path.join(self.experiment_folder, "results_clipscore.tsv"), index=False, sep="\t")
+
+class ImageSimilarity(Evaluate):
+    """
+    Evaluate how similar the original image is to the first and final generated images.
+    """
+    def __init__(self, **kwargs) -> None:
+        super().__init__(**kwargs)
         
+        # Load ResNet model
+        model = models.resnet18(pretrained=True)
+        model.eval()
+        self.net = torch.nn.Sequential(*list(model.children())[:-1])
+
+        # Create transform for images for ResNet
+        self.transform = transforms.Compose([
+            transforms.Resize(256),
+            transforms.CenterCrop(224),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                std=[0.229, 0.224, 0.225])
+        ])
+
+        # Define similarity metric
+        self.metric = 'cosine'
+        
+    def extract_features(self, file):
+        image = Image.open(file)
+        image = self.transform(image)
+        image = image.unsqueeze(0) # make it compatible with the input shape of net
+
+        with torch.no_grad(): # disable gradient calculation
+            features = self.net(image)
+
+        return torch.flatten(features, start_dim=1)
+
+    def evaluate(self):
+        """
+        Evaluate similarity between the original image and the first generated image and the
+        similarity between the original image and the final generated image.
+        Their features are extracted with ResNet and compared with a cosine similarity method.
+
+        The lower the score, the more similar the images are.
+        """
+
+        # distance.cdist(original, first_gen, self.metric)[0]
+        # distance.cdist(original, second_gen, self.metric)[0]
+
+    def save_results(self):
+        """
+        Save evaluation results to file
+        """
+        
+
 if __name__ == "__main__":
 
     argparser = argparse.ArgumentParser()
@@ -140,6 +194,8 @@ if __name__ == "__main__":
 
     if kwargs["evaluation_method"] == "clipscore":
         evaluation = CLIPScore(**kwargs)
+    elif kwargs["evaluation_method"] == "image_sim":
+        evaluation = ImageSimilarity(**kwargs)
     else:
         raise ValueError(f"Unknown evaluation method {kwargs['evaluation_method']}")
     
