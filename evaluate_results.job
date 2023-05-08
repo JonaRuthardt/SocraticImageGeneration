@@ -1,0 +1,41 @@
+#!/bin/bash
+
+#SBATCH --partition=shared
+#SBATCH --gres=gpu:0
+#SBATCH --job-name=Evaluation
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --time=02:00:00
+#SBATCH --mem=32G
+#SBATCH --output=evaluation_%A.out
+
+module purge
+module load 2022
+module load Anaconda3/2022.05
+source activate DL2
+
+# control whether to run evaluation for all available folders or individual ones
+RUN_LOOP=true
+
+
+if [ "$RUN_LOOP" = false ]; then
+  # srun python -m evaluation.evaluate --experiment_name evaluation1
+  # srun python -m evaluation.evaluate --experiment_name chatgpt_template_test_V1
+  srun python -m evaluation.evaluate --experiment_name chatgpt_template_test_V0
+else
+  # Set the directory to iterate over
+  DIR="data/results"
+  ABS_DIR="$(readlink -f "$DIR")"
+  
+  # Loop over all subfolders in the parent directory
+  for subfolder in "$ABS_DIR"/*; do
+    if [ -d "$subfolder" ]; then
+      # Check if the subfolder already includes a file starting with "results"
+      if [ ! -f "$subfolder/results_clipscore_"* ]; then
+        # Call the Python evaluation script if no "results" file is found
+        folder_name=$(basename "$subfolder")
+        srun python -m evaluation.evaluate --experiment_name "$folder_name"
+      fi
+    fi
+  done
+fi

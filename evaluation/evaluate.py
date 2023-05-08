@@ -1,10 +1,14 @@
 import os, sys
 import json
+import argparse
+from tqdm import tqdm
 
 import pandas as pd
 import torch
 from PIL import Image
 import open_clip
+
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 class Evaluate():
     """
@@ -26,9 +30,16 @@ class Evaluate():
         """
         Load prompts from given prompt-specific folder containing generated images
         """
-        with open(os.path.join(folder, "prompts.txt"), "r") as f:
-            prompts = f.read().splitlines()
-            prompts = [p for p in prompts if p != "" and p[0] != "<"]
+        with open(os.path.join(folder, "prompts.csv"), "r") as f:
+            orig_prompts = f.read().splitlines()
+            prompts = []
+            for prompt_line in orig_prompts:
+                if prompt_line.startswith("optimized_prompt") or prompt_line.startswith("user_prompt"):
+                    prompts.append(prompt_line.split("\t")[-1])
+                else:
+                    prompts[-1] += prompt_line
+        
+
         return prompts
     
     def evaluate(self):
@@ -41,7 +52,7 @@ class Evaluate():
         """
         Save evaluation results to file
         """
-        raise NotImplementedError
+        pass
         
 class CLIPScore(Evaluate):
     """
@@ -52,58 +63,85 @@ class CLIPScore(Evaluate):
         
         # Load CLIP model
         self.model, _, self.preprocess = open_clip.create_model_and_transforms('ViT-B-32', pretrained='laion2b_s34b_b79k')
+        self.model = self.model.to(device)
         self.tokenizer = open_clip.get_tokenizer('ViT-B-32')
 
         self.results_df = pd.DataFrame(columns=["prompt_id", "image_id", "score", "user_prompt", "optimized_prompt", "image_path"], index=["prompt_id", "image_id"])
+        self.result_dict = {
+                "prompt_id": [],
+                "image_id": [],
+                "score": [],
+                "user_prompt": [],
+                "optimized_prompt": [],
+                "image_path": [],
+            }
         
     def evaluate(self):
         """
         Evaluate image using CLIP
         """
         # iterate over all prompts/generations of experiment
-        for prompt_folder in os.listdir(self.experiment_folder):
+        for prompt_folder in tqdm(os.listdir(self.experiment_folder)):
+            prompt_folder = os.path.join(self.experiment_folder, prompt_folder)
             if not os.path.isdir(prompt_folder):
                 continue
-            prompt_folder = os.path.join(self.experiment_folder, prompt_folder)
             prompts = self.load_prompts(prompt_folder)
 
-            # Tokenize and encode user prompt
-            user_prompt = self.tokenizer([prompts[0]])
-            user_prompt_features = self.model.encode_text(user_prompt)
-            user_prompt_features /= user_prompt_features.norm(dim=-1, keepdim=True)
+            with torch.no_grad():
+                # Tokenize and encode user prompt
+                user_prompt = self.tokenizer([prompts[0]]).to(device)
+                user_prompt_features = self.model.encode_text(user_prompt)
+                user_prompt_features /= user_prompt_features.norm(dim=-1, keepdim=True)
 
+                # load and encode generated images
+                raw_images = [Image.open(os.path.join(prompt_folder, f"image_{image_idx}.png")) for image_idx in range(len(prompts))]
+                images = torch.stack([self.preprocess(image) for image in raw_images]).to(device)
+                images_features = self.model.encode_image(images)
+                images_features /= images_features.norm(dim=-1, keepdim=True)
 
-            # iterate over all generated images
-            images = []
-            images_features = []
-            for image_idx, prompt in enumerate(prompts):
-                # load, preprocess, and encode image
-                image = Image.open(os.path.join(prompt_folder, f"image_{image_idx}.png"))
-                images.append(image)
-                image = self.preprocess(image).unsqueeze(0)
-                image_features = self.model.encode_image(image)
-                image_features /= image_features.norm(dim=-1, keepdim=True)
-                images_features.append(image_features)
+                # calculate CLIP-based similarity score
+                scores = (100.0 * images_features @ user_prompt_features.T).data.cpu().squeeze(-1).numpy().tolist()
 
-                # calculate CLIP-based similarity of original prompt and generated image
-                #TODO check if this is best and correct way to implement scoring (consider vectorization)
-                score = (100.0 * image_features @ user_prompt_features).data.numpy()
+            # delete some objects due to OOM issues
+            del user_prompt, user_prompt_features, images, images_features, raw_images
 
-                df_row = {
-                    "prompt_id": int(prompt_folder.split("/")[-1]),
-                    "image_id": image_idx,
-                    "score": score,
-                    "user_prompt": prompts[0],
-                    "optimized_prompt": prompt,
-                    "image_path": os.path.join(prompt_folder, f"image_{image_idx}.png"),
-                }
-                self.results_df = self.results_df.append(df_row)
+            # save results to global dict
+            self.result_dict["prompt_id"].extend([int(prompt_folder.split("/")[-1])] * len(prompts))
+            self.result_dict["image_id"].extend(list(range(len(prompts))))
+            self.result_dict["score"].extend(scores)
+            self.result_dict["user_prompt"].extend([prompts[0]] * len(prompts))
+            self.result_dict["optimized_prompt"].extend(prompts)
+            self.result_dict["image_path"].extend([os.path.join(prompt_folder, f"image_{image_idx}.png") for image_idx in range(len(prompts))])
+            
+            # # save results to dataframe
+            # df_row = {
+            #     "prompt_id": [int(prompt_folder.split("/")[-1])] * len(prompts),
+            #     "image_id": list(range(len(prompts))),
+            #     "score": scores,
+            #     "user_prompt": [prompts[0]] * len(prompts),
+            #     "optimized_prompt": prompts,
+            #     "image_path": [os.path.join(prompt_folder, f"image_{image_idx}.png") for image_idx in range(len(prompts))],
+            # }
+            # self.results_df = pd.concat([self.results_df, pd.DataFrame.from_dict(df_row)])
 
+    def save_results(self):
+        """
+        Save evaluation results to file
+        """
+        self.results_df = pd.DataFrame.from_dict(self.result_dict)
+        self.results_df.to_csv(os.path.join(self.experiment_folder, "results_clipscore.tsv"), index=False, sep="\t")
+        
+if __name__ == "__main__":
 
-        # Analyze results and obtain ultimate quantitative scores
+    argparser = argparse.ArgumentParser()
+    argparser.add_argument("--experiment_name", type=str, default="default-experiment", help="Name of experiment to evaluate")
+    argparser.add_argument("--evaluation_method", type=str, default="clipscore", help="Evaluation method to use", choices=["clipscore"])
+    kwargs = vars(argparser.parse_args())
 
-#TODO possible ways of obtaining scores:
-# - average score per image_id -> hard to make comparable across prompts
-# - number of occurances with score_optimized > score_user_prompt per image_id -> check if optimized prompt yields better results than user prompt
-# - number of occurances with score_optimized > score_user_prompt + all previous score_optimized -> check if continuing to optimize yields better results than previous optimization
-# - number of occurances with score_optimized > all other scores -> check how often best performance is obtained at given pipline iteration
+    if kwargs["evaluation_method"] == "clipscore":
+        evaluation = CLIPScore(**kwargs)
+    else:
+        raise ValueError(f"Unknown evaluation method {kwargs['evaluation_method']}")
+    
+    evaluation.evaluate()
+    evaluation.save_results()
