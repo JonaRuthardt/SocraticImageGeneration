@@ -181,7 +181,7 @@ class ImageSimilarity(Evaluate):
 
     def save_results(self):
         """
-        Save evaluation results to file
+        Save evaluation results to file.
         """
         
 
