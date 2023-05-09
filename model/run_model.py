@@ -35,10 +35,6 @@ def main():
     p3.add_argument('--guidance_scale', default=7.5, type=float, help="Classifier free guidance forces the generation to better match with the prompt.")
     p3.add_argument('--height', default=512, type=int, help="Height of the image to be generated.")
     p3.add_argument('--width', default=512, type=int, help="Width of the image to be generated.")
-# num_inference_steps
-# guidance_scale = gu
-# height = height if 
-# width = width if wi
 
     # Image captioning
     p4 = main_parser.add_parser('image_captioning')
@@ -50,6 +46,7 @@ def main():
     # Language model
     p5 = main_parser.add_parser('language_model')
     p5.add_argument('--model', default=LanguageModelType.chat_gpt.value, type=str, choices=[m.value for m in LanguageModelType], help='Language model')
+    p5.add_argument('--api_key_path', default="config/openai_api_key.txt", type=str, help='Path to text file containing api key')
     p5.add_argument('--template', default='config/templates/default_template.txt', type=str, help='Path to template to use for language model')
     p5.add_argument('--system_prompt', default='config/templates/model_role.txt', type=str, help='Path to system prompt to use for language model')
     p5.add_argument('--similarity_template', default='config/templates/default_similarity_template.txt', type=str, help='Path to template to use for similarity check')

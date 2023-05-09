@@ -164,6 +164,20 @@ class LanguageModel():
         """
         pass
 
+    def load_api_key(self, path: str):
+        """
+        Load API key from file
+
+        Parameters:
+            path (str): path to API key file
+        """
+
+        if not os.path.exists(path):
+            raise ValueError(f"API key file {path} does not exist")
+
+        with open(path, "r") as f:
+            self.api_key = f.read()
+
 
 class ChatGPT(LanguageModel):
     """
@@ -174,7 +188,7 @@ class ChatGPT(LanguageModel):
 
         super().__init__(**kwargs)
         self.model = LanguageModelType.chat_gpt.value
-        self.api_key = kwargs.get("api_key", "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")
+        self.load_api_key(kwargs.get("api_key_path", "config/openai_api_key.txt"))
         self.token_usage = 0
         self.role = self.load_template(kwargs.get("system_prompt", "config/templates/model_role.txt"))
         self.similarity_role = self.load_template(kwargs.get("system_sim_prompt", "config/templates/model_role_similarity.txt"))
@@ -267,7 +281,7 @@ class Davinci003(LanguageModel):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.model = LanguageModelType.davinci_003.value
-        self.api_key = kwargs.get("api_key", "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")
+        self.load_api_key(kwargs.get("api_key_path", "config/openai_api_key.txt"))
         self.token_usage = 0
         openai.api_key = self.api_key
 
