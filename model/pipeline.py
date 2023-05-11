@@ -100,8 +100,8 @@ class Pipeline:
         prompt = user_prompt
         captions = []
         previous_prompts = []
-        terminated = False
-        best_image_idx = False
+        terminated = -1
+        best_image_idx = -1
 
         # Generate and save image for original user prompt
         image = self.image_generator.generate_image(prompt)
@@ -114,7 +114,7 @@ class Pipeline:
             captions.append(caption)
 
             # Check termination condition
-            if self.terminate_on_similarity and self.language_model.check_similarity(original_prompt, caption):
+            if self.terminate_on_similarity and self.language_model.check_similarity(original_prompt, caption) and terminated == -1:
                 terminated = i
                 if self.pipeline_mode != "full_experiment":
                     break
