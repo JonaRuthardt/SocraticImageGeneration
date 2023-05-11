@@ -186,7 +186,7 @@ class ImageSimilarity(Evaluate):
 
                 # calculate image similarity
                 original = images_features[0]
-                scores = torch.stack([self.image_similarity.cos_similarity(original, features) for features in images_features[1:]])
+                scores = torch.stack([self.cos_similarity(original, features) for features in images_features[1:]])
             
             # delete some objects due to OOM issues
             del images, images_features, original
