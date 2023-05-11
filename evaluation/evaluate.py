@@ -78,12 +78,11 @@ class CLIPScore(Evaluate):
                 "image_path": [],
             }
     
-    def encode_image(self, file):
-        image = Image.open(file)
-        image = torch.stack([self.preprocess(image)]).to(device)
-        image_features = self.model.encode_image(image)
-        image_features /= image_features.norm(dim=-1, keepdim=True)
-        return image_features
+    def encode_images(self, images):
+        image = torch.stack([self.preprocess(image) for image in images]).to(device)
+        images_features = self.model.encode_image(image)
+        images_features /= images_features.norm(dim=-1, keepdim=True)
+        return images_features
         
     def evaluate(self):
         """
@@ -104,9 +103,10 @@ class CLIPScore(Evaluate):
 
                 # load and encode generated images
                 raw_images = [Image.open(os.path.join(prompt_folder, f"image_{image_idx}.png")) for image_idx in range(len(prompts))]
-                images = torch.stack([self.preprocess(image) for image in raw_images]).to(device)
-                images_features = self.model.encode_image(images)
-                images_features /= images_features.norm(dim=-1, keepdim=True)
+                images_features = self.encode_images(raw_images)
+                # images = torch.stack([self.preprocess(image) for image in raw_images]).to(device)
+                # images_features = self.model.encode_image(images)
+                # images_features /= images_features.norm(dim=-1, keepdim=True)
 
                 # calculate CLIP-based similarity score
                 scores = (100.0 * images_features @ user_prompt_features.T).data.cpu().squeeze(-1).numpy().tolist()
