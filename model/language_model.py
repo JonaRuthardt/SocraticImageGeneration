@@ -46,6 +46,7 @@ class LanguageModel():
 
         self.template = self.load_template(kwargs.get("template", "config/templates/default_template.txt"))
         self.similarity_template = self.load_template(kwargs.get("similarity_template", "config/templates/default_similarity_template.txt"))
+        self.best_image_template = self.load_template(kwargs.get("best_image_template", "config/templates/default_best_image_template.txt"))
     
     def check_similarity(self, user_prompt: str, image_caption: str):
         """
@@ -62,7 +63,7 @@ class LanguageModel():
         similarity_prompt = self.get_similarity_prompt(user_prompt, image_caption)
         similarity_response = self.query_language_model(similarity_prompt)
 
-        return 1 if "Yes" in similarity_response else 0
+        return 1 if "yes" in similarity_response.lower() else 0
 
 
     def generate_optimized_prompt(self, user_prompt: str, image_caption: str, previous_prompts: list = []):
@@ -82,6 +83,45 @@ class LanguageModel():
 
         return LLM_response
     
+    def select_best_image(self, user_prompt: str, captions: list):
+        """
+        Select image that best matches user prompt from list of generated image captions
+
+        Parameters:
+            user_prompt (str): user prompt
+            captions (list): list of captions for generated images
+        Returns:
+            int: index of best image
+        """
+
+        best_image_prompt = self.get_best_image_prompt(user_prompt, captions)
+        best_image_response = self.query_language_model(best_image_prompt).lower()
+
+        if "1" in best_image_response or "one" in best_image_response:
+            best_image_idx = 0
+        elif "2" in best_image_response or "two" in best_image_response:
+            best_image_idx = 1
+        elif "3" in best_image_response or "three" in best_image_response:
+            best_image_idx = 2
+        elif "4" in best_image_response or "four" in best_image_response:
+            best_image_idx = 3
+        elif "5" in best_image_response or "five" in best_image_response:
+            best_image_idx = 4
+        elif "6" in best_image_response or "six" in best_image_response:
+            best_image_idx = 5
+        elif "7" in best_image_response or "seven" in best_image_response:
+            best_image_idx = 6
+        elif "8" in best_image_response or "eight" in best_image_response:
+            best_image_idx = 7
+        elif "9" in best_image_response or "nine" in best_image_response:
+            best_image_idx = 8
+        elif "10" in best_image_response or "ten" in best_image_response:
+            best_image_idx = 9
+        else:
+            best_image_idx = -1
+
+        return best_image_idx
+
     def load_template(self, template_file: str):
         """
         Load templates from file
@@ -142,6 +182,27 @@ class LanguageModel():
         prompt = prompt.replace("<IMAGE_CAPTION>", image_caption)
 
         return prompt
+
+    def get_best_image_prompt(self, user_prompt: str, captions: list):
+        """
+        Generate prompt to select best image given original user prompt and list of image captions
+
+        Parameters:
+            user_prompt (str): user prompt
+            captions (list): list of captions for generated images
+        Returns:
+            str: prompt to select best image
+        """
+
+        prompt = self.best_image_template.replace("<USER_PROMPT>", user_prompt)
+        # prompt = prompt.replace("<RANGE>", len(captions)+1)
+        captions_prompt = ""
+        for idx, caption in enumerate(captions):
+            captions_prompt += f"{idx+1}. {caption}\n"
+        prompt = prompt.replace("<CAPTIONS>", captions_prompt)
+
+        return prompt
+
     
     def query_language_model(self, prompt: str):
         """
@@ -192,6 +253,7 @@ class ChatGPT(LanguageModel):
         self.token_usage = 0
         self.role = self.load_template(kwargs.get("system_prompt", "config/templates/model_role.txt"))
         self.similarity_role = self.load_template(kwargs.get("system_sim_prompt", "config/templates/model_role_similarity.txt"))
+        self.best_image_role = self.load_template(kwargs.get("system_best_image_prompt", None))
         openai.api_key = self.api_key
 
     def get_language_prompt(self, user_prompt: str, image_caption: str, previous_prompts: list = []):
@@ -234,6 +296,32 @@ class ChatGPT(LanguageModel):
         prompt = self.similarity_template.replace("<USER_PROMPT>", user_prompt)
         # Replace <IMAGE_CAPTION> in template with image caption
         prompt = prompt.replace("<IMAGE_CAPTION>", image_caption)
+
+        message.append({"role": "user", "content": prompt})
+
+        return message
+    
+    def get_best_image_prompt(self, user_prompt: str, captions: list):
+        """
+        Generate prompt to select best image given original user prompt and list of image captions
+
+        Parameters:
+            user_prompt (str): user prompt
+            captions (list): list of captions for generated images
+        Returns:
+            str: prompt to select best image
+        """
+
+        if self.best_image_role is None:
+            raise ValueError("No valid template provided for best image system prompt")
+
+        message = [{"role": "system", "content": self.best_image_role.replace("<RANGE>", str(len(captions)))}]
+
+        prompt = self.best_image_template.replace("<USER_PROMPT>", user_prompt)
+        captions_prompt = ""
+        for idx, caption in enumerate(captions):
+            captions_prompt += f"{idx+1}. {caption}\n"
+        prompt = prompt.replace("<CAPTIONS>", captions_prompt)
 
         message.append({"role": "user", "content": prompt})
 

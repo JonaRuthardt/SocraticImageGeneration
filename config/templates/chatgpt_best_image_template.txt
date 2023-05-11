@@ -1,0 +1,3 @@
+Original user prompt: <USER_PROMPT>
+Captions of generated images:
+<CAPTIONS>

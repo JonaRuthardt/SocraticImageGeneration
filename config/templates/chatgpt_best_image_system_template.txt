@@ -1,0 +1,2 @@
+Given a set of <RANGE> captions for different images, select the image caption that best fits the original user prompt. 
+Only return the number of the image that is most closely related to the user prompt.
