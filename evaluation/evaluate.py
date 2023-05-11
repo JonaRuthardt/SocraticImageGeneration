@@ -77,6 +77,13 @@ class CLIPScore(Evaluate):
                 "optimized_prompt": [],
                 "image_path": [],
             }
+    
+    def encode_image(self, file):
+        image = Image.open(file)
+        image = torch.stack([self.preprocess(image)]).to(device)
+        image_features = self.model.encode_image(image)
+        image_features /= image_features.norm(dim=-1, keepdim=True)
+        return image_features
         
     def evaluate(self):
         """
@@ -140,32 +147,20 @@ class ImageSimilarity(Evaluate):
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
         
-        # Load ResNet model
-        model = models.resnet18(pretrained=True)
-        model.eval()
-        self.net = torch.nn.Sequential(*list(model.children())[:-1])
-
-        # Create transform for images for ResNet
-        self.transform = transforms.Compose([
-            transforms.Resize(256),
-            transforms.CenterCrop(224),
-            transforms.ToTensor(),
-            transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                std=[0.229, 0.224, 0.225])
-        ])
-
-        # Define similarity metric
-        self.metric = 'cosine'
+        self.encode_images = CLIPScore(**kwargs).encode_images
+        self.cos = torch.nn.CosineSimilarity(dim=0)
+        self.results_df = pd.DataFrame(columns=["prompt_id", "image_id", "score", "user_prompt", "optimized_prompt", "image_path"], index=["prompt_id", "image_id"])
+        self.result_dict = {
+                "prompt_id": [],
+                "image_id": [],
+                "score": [],
+                "user_prompt": [],
+                "optimized_prompt": [],
+                "image_path": [],
+            }
         
-    def extract_features(self, file):
-        image = Image.open(file)
-        image = self.transform(image)
-        image = image.unsqueeze(0) # make it compatible with the input shape of net
-
-        with torch.no_grad(): # disable gradient calculation
-            features = self.net(image)
-
-        return torch.flatten(features, start_dim=1)
+    def cos_similarity(self, features_1, features_2):
+        return self.cos(features_1.flatten(), features_2.flatten())
 
     def evaluate(self):
         """
@@ -176,13 +171,39 @@ class ImageSimilarity(Evaluate):
         The lower the score, the more similar the images are.
         """
 
-        # distance.cdist(original, first_gen, self.metric)[0]
-        # distance.cdist(original, second_gen, self.metric)[0]
+        # iterate over all prompts/generations of experiment
+        for prompt_folder in tqdm(os.listdir(self.experiment_folder)):
+            prompt_folder = os.path.join(self.experiment_folder, prompt_folder)
+            if not os.path.isdir(prompt_folder):
+                continue
+            prompts = self.load_prompts(prompt_folder)
+
+            with torch.no_grad():
+                # load and encode generated images
+                images = [Image.open(os.path.join(prompt_folder, f"image_{image_idx}.png")) for image_idx in range(len(prompts))]
+                images_features = self.encode_images(images)
+
+                # calculate image similarity
+                original = images_features[0]
+                scores = torch.stack([self.image_similarity.cos_similarity(original, features) for features in images_features[1:]])
+            
+            # delete some objects due to OOM issues
+            del images, images_features, original
+
+            # save results to global dict
+            self.result_dict["prompt_id"].extend([int(prompt_folder.split("/")[-1])] * len(prompts))
+            self.result_dict["image_id"].extend(list(range(len(prompts))))
+            self.result_dict["score"].extend(scores)
+            self.result_dict["user_prompt"].extend([prompts[0]] * len(prompts))
+            self.result_dict["optimized_prompt"].extend(prompts)
+            self.result_dict["image_path"].extend([os.path.join(prompt_folder, f"image_{image_idx}.png") for image_idx in range(len(prompts))])
 
     def save_results(self):
         """
         Save evaluation results to file.
         """
+        self.results_df = pd.DataFrame.from_dict(self.result_dict)
+        self.results_df.to_csv(os.path.join(self.experiment_folder, "results_image_similarity.tsv"), index=False, sep="\t")
         
 
 if __name__ == "__main__":
@@ -194,7 +215,7 @@ if __name__ == "__main__":
 
     if kwargs["evaluation_method"] == "clipscore":
         evaluation = CLIPScore(**kwargs)
-    elif kwargs["evaluation_method"] == "image_sim":
+    elif kwargs["evaluation_method"] == "image_similarity":
         evaluation = ImageSimilarity(**kwargs)
     else:
         raise ValueError(f"Unknown evaluation method {kwargs['evaluation_method']}")
