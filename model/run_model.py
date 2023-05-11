@@ -29,7 +29,7 @@ def main():
 
     # Image generator
     p3 = main_parser.add_parser('image_generator')
-    p3.add_argument('--model', default=ImageGeneratorType.StableDiffusionV1_4.value, type=str, choices=[m.value for m in ImageGeneratorType], help='Image generator model')
+    p3.add_argument('--model', default=ImageGeneratorType.StableDiffusionV2_1.value, type=str, choices=[m.value for m in ImageGeneratorType], help='Image generator model')
     p3.add_argument('--device_map', default=device, type=str, help="Device to run image generator on.")
     p3.add_argument('--torch_dtype', default=precision, type=torch.dtype, help="Model Precision.")
     p3.add_argument('--seed', default=None, type=int, help="The seed for the model.")
