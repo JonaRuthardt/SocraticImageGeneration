@@ -18,6 +18,7 @@ class Evaluate():
     """
     def __init__(self, **kwargs) -> None:
         self.experiment_folder = os.path.join("data/results", kwargs.get("experiment_name", "default-experiment"))
+        self.experiment_name = kwargs.get("experiment_name", "default-experiment")
         self.hyperparameters = self.load_hyperparameters()
 
 
@@ -54,7 +55,7 @@ class Evaluate():
         """
         Save evaluation results to file
         """
-        pass
+        raise NotImplementedError
         
 class CLIPScore(Evaluate):
     """
@@ -138,7 +139,7 @@ class CLIPScore(Evaluate):
         Save evaluation results to file
         """
         self.results_df = pd.DataFrame.from_dict(self.result_dict)
-        self.results_df.to_csv(os.path.join(self.experiment_folder, "results_clipscore.tsv"), index=False, sep="\t")
+        self.results_df.to_csv(os.path.join(self.experiment_folder, f"results_clipscore_{self.experiment_name}.tsv"), index=False, sep="\t")
 
 class ImageSimilarity(Evaluate):
     """
@@ -146,7 +147,7 @@ class ImageSimilarity(Evaluate):
     """
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
-        
+
         self.encode_images = CLIPScore(**kwargs).encode_images
         self.cos = torch.nn.CosineSimilarity(dim=0)
         self.results_df = pd.DataFrame(columns=["prompt_id", "image_id", "score", "user_prompt", "optimized_prompt", "image_path"], index=["prompt_id", "image_id"])
@@ -203,7 +204,7 @@ class ImageSimilarity(Evaluate):
         Save evaluation results to file.
         """
         self.results_df = pd.DataFrame.from_dict(self.result_dict)
-        self.results_df.to_csv(os.path.join(self.experiment_folder, "results_image_similarity.tsv"), index=False, sep="\t")
+        self.results_df.to_csv(os.path.join(self.experiment_folder, f"results_image_similarity_{self.experiment_name}.tsv"), index=False, sep="\t")
         
 
 if __name__ == "__main__":

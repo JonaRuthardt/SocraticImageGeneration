@@ -23,7 +23,9 @@ class Pipeline:
         self.image_generator = load_image_generator(**kwargs.get('image_generator',{}))
         self.image_captioning = load_captioning_model(**kwargs.get('image_captioning',{}))
 
+        self.pipeline_mode = kwargs.get('pipeline',{}).get("mode", "inference")
         self.terminate_on_similarity = kwargs.get('pipeline',{}).get("terminate_on_similarity", True)
+        self.select_best_image = kwargs.get('pipeline',{}).get("select_best_image", True)
 
         # Set-up folder to store generated images and save hyperparameters
         self.image_id = 0
@@ -94,9 +96,12 @@ class Pipeline:
         os.makedirs(folder_name, exist_ok=False)
 
         # Generate image
+        original_prompt = user_prompt
         prompt = user_prompt
         captions = []
         previous_prompts = []
+        terminated = False
+        best_image_idx = False
 
         # Generate and save image for original user prompt
         image = self.image_generator.generate_image(prompt)
@@ -108,9 +113,11 @@ class Pipeline:
             caption = self.image_captioning.generate_caption(image)
             captions.append(caption)
 
-            # Check termnation condition
-            if self.terminate_on_similarity and self.language_model.check_similarity(prompt, caption):
-                break
+            # Check termination condition
+            if self.terminate_on_similarity and self.language_model.check_similarity(original_prompt, caption):
+                terminated = i
+                if self.pipeline_mode != "full_experiment":
+                    break
 
             # Optimize prompt
             prompt = self.language_model.generate_optimized_prompt(user_prompt, caption, previous_prompts)
@@ -120,6 +127,13 @@ class Pipeline:
             image = self.image_generator.generate_image(prompt)
             image.save(os.path.join(folder_name, f"image_{i+1}.png"))
 
+        # Generate caption for final image
+        caption = self.image_captioning.generate_caption(image)
+        captions.append(caption)
+
+        if self.select_best_image:
+            best_image_idx = self.language_model.select_best_image(user_prompt, captions)
+
         # Store intermediate and final prompts and captions
         with open(os.path.join(folder_name, "prompts.csv"), "wb") as f:
             f.write(f"user_prompt\t{user_prompt}\n".encode("utf-8", errors="replace"))
@@ -128,6 +142,9 @@ class Pipeline:
         with open(os.path.join(folder_name, f"captions.csv"), "wb") as f:
             for i, caption in enumerate(captions):
                 f.write(f"{i}\t{caption}\n".encode("utf-8", errors="replace"))
+        with open(os.path.join(folder_name, f"results.txt"), "wb") as f:
+            f.write(f"terminated at iteration:\t{terminated}\n".encode("utf-8", errors="replace"))
+            f.write(f"best image:\t{best_image_idx}\n".encode("utf-8", errors="replace"))
         
         # Return path to folder of generated images
         return folder_name
