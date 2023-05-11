@@ -41,7 +41,7 @@ def main():
     # Image captioning
     p4 = main_parser.add_parser('image_captioning')
     p4.add_argument('--device_map',
-                    default='cuda', 
+                    default=device,
                     help='Image captioning model')
     p4.add_argument('--model', default=CaptioningModelType.BLIP_LARGE.value, type=str, choices=[m.value for m in CaptioningModelType], help='Image captioning model')
 

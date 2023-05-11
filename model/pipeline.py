@@ -158,8 +158,9 @@ class Pipeline:
             start = time.time()
             try:
                 self.generate_image(prompt, max_cycles=max_cycles)
-            except OSError:
+            except OSError as e:
                 # image was already generated
+                print(e)
                 #TODO remove or implement nicer
                 pass
             self.reset_pipeline()
