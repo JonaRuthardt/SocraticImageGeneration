@@ -97,7 +97,7 @@ class Pipeline:
         folder_name = str(self.image_id).zfill(6)
         folder_name = os.path.join(self.path, folder_name)
         self.image_id += 1
-        # os.makedirs(folder_name, exist_ok=False)
+        os.makedirs(folder_name, exist_ok=True)
 
         # Generate image
         original_prompt = user_prompt
@@ -138,8 +138,9 @@ class Pipeline:
                 image_to_show.show()
 
         # Generate caption for final image
-        caption = self.image_captioning.generate_caption(image)
-        captions.append(caption)
+        if terminated == -1:
+            caption = self.image_captioning.generate_caption(image)
+            captions.append(caption)
 
         if self.select_best_image:
             best_image_idx = self.language_model.select_best_image(user_prompt, captions)
