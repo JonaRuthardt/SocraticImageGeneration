@@ -9,6 +9,7 @@ import datasets
 from model.language_model import load_language_model
 from model.image_generator import load_image_generator
 from model.image_captioning import load_captioning_model
+from PIL import Image
 
 random.seed(42)
 
@@ -62,12 +63,15 @@ class Pipeline:
             elif self.dataset == "cococaption-small":
                 annotations = pd.read_csv("data/datasets/coco-small/annotations.tsv", sep="\t")
                 self.dataset = annotations["caption 1"].tolist()
+                self.original_images = annotations["file_name"].tolist()
             elif self.dataset == "cococaption-medium":
                 annotations = pd.read_csv("data/datasets/coco-medium/annotations.tsv", sep="\t")
                 self.dataset = annotations["caption 1"].tolist()
+                self.original_images = annotations["file_name"].tolist()
             elif self.dataset == "cococaption-large":
                 annotations = pd.read_csv("data/datasets/coco-large/annotations.tsv", sep="\t")
                 self.dataset = annotations["caption 1"].tolist()
+                self.original_images = annotations["file_name"].tolist()
             else:
                 raise ValueError(f"Unknown dataset {self.dataset}")
             
@@ -93,7 +97,7 @@ class Pipeline:
         folder_name = str(self.image_id).zfill(6)
         folder_name = os.path.join(self.path, folder_name)
         self.image_id += 1
-        os.makedirs(folder_name, exist_ok=False)
+        # os.makedirs(folder_name, exist_ok=False)
 
         # Generate image
         original_prompt = user_prompt
@@ -102,6 +106,7 @@ class Pipeline:
         previous_prompts = []
         terminated = -1
         best_image_idx = -1
+
 
         # Generate and save image for original user prompt
         image = self.image_generator.generate_image(prompt)
@@ -155,6 +160,13 @@ class Pipeline:
         """
 
         for i, prompt in enumerate(self.dataset):
+            # Save orignal image
+            folder_name = str(i).zfill(6)
+            folder_name = os.path.join(self.path, folder_name)
+            os.makedirs(folder_name, exist_ok=False)
+            if self.dataset in ["cococaption-small", "cococaption-medium", "cococaption-large"]:
+                original_image = Image.open(self.original_images[i])
+                original_image.save(os.path.join(folder_name, f"original_image.png"))
             start = time.time()
             try:
                 self.generate_image(prompt, max_cycles=max_cycles)
