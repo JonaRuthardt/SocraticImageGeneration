@@ -27,7 +27,7 @@ class Pipeline:
         self.pipeline_mode = kwargs.get('pipeline',{}).get("mode", "inference")
         self.terminate_on_similarity = kwargs.get('pipeline',{}).get("terminate_on_similarity", True)
         self.select_best_image = kwargs.get('pipeline',{}).get("select_best_image", True)
-
+        self.demo = kwargs.get('pipeline',{}).get("demo", False)
         # Set-up folder to store generated images and save hyperparameters
         self.image_id = 0
         experiment_name = kwargs.get('pipeline',{}).get("experiment_name", "default-experiment")
@@ -74,13 +74,13 @@ class Pipeline:
                 self.original_images = annotations["file_name"].tolist()
             else:
                 raise ValueError(f"Unknown dataset {self.dataset}")
-            
+
             # Execute dataset-based experiment pipeline
             #TODO do we always directly want to execute it here or implement running the experiments outside of the pipeline?
             self.generate_images_from_dataset(max_cycles=kwargs["pipeline"]["max_cycles"])
-        elif kwargs.get('pipeline',{}).get("prompt", None) is not None:
+        elif kwargs.get('dataset',{}).get("prompt", None) is not None:
             # Execute single prompt experiment pipeline
-            self.generate_image(kwargs["pipeline"]["prompt"], max_cycles=kwargs["pipeline"]["max_cycles"])
+            self.generate_image(kwargs["dataset"]["prompt"], max_cycles=kwargs["pipeline"]["max_cycles"])
 
     def generate_image(self, user_prompt: str, max_cycles: int = 5):
         """
@@ -107,10 +107,12 @@ class Pipeline:
         terminated = -1
         best_image_idx = -1
 
-
         # Generate and save image for original user prompt
         image = self.image_generator.generate_image(prompt)
         image.save(os.path.join(folder_name, f"image_{0}.png"))
+        if self.demo:
+            image_to_show = Image.open(os.path.join(folder_name, f"image_{0}.png"))
+            image_to_show.show()
 
         for i in range(max_cycles):
 
@@ -131,6 +133,9 @@ class Pipeline:
             # Generate and save image for optimized prompt
             image = self.image_generator.generate_image(prompt)
             image.save(os.path.join(folder_name, f"image_{i+1}.png"))
+            if self.demo:
+                image_to_show = Image.open(os.path.join(folder_name, f"image_{i+1}.png"))
+                image_to_show.show()
 
         # Generate caption for final image
         caption = self.image_captioning.generate_caption(image)
@@ -144,9 +149,13 @@ class Pipeline:
             f.write(f"user_prompt\t{user_prompt}\n".encode("utf-8", errors="replace"))
             for i, prompt in enumerate(previous_prompts):
                 f.write(f"optimized_prompt_{i}\t{prompt}\n".encode("utf-8", errors="replace"))
+            if self.demo:
+                print(f"optimized_prompt_{i}\t{prompt}\n")
         with open(os.path.join(folder_name, f"captions.csv"), "wb") as f:
             for i, caption in enumerate(captions):
                 f.write(f"{i}\t{caption}\n".encode("utf-8", errors="replace"))
+            if self.demo:
+                print(f"{i}\t{caption}\n")
         with open(os.path.join(folder_name, f"results.txt"), "wb") as f:
             f.write(f"terminated at iteration:\t{terminated}\n".encode("utf-8", errors="replace"))
             f.write(f"best image:\t{best_image_idx}\n".encode("utf-8", errors="replace"))

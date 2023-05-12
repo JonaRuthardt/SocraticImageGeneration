@@ -18,9 +18,9 @@ def main():
     p1.add_argument('--mode', default='inference', type=str, choices=['inference', 'full_experiment'], help='Mode of pipeline')
     p1.add_argument('--experiment_name', default='default-experiment', type=str, help='Name of experiment')
     p1.add_argument('--max_cycles', default=5, type=int, help='Maximum number of times to optimize prompt and generate image')
-    p1.add_argument('--terminate_on_similarity', default=False, type=bool, help="Whether to terminate the generation process when the language model regards the generated image and the original prompt as similar enough")
+    p1.add_argument('--terminate_on_similarity', default=True, type=bool, help="Whether to terminate the generation process when the language model regards the generated image and the original prompt as similar enough")
     p1.add_argument('--select_best_image', default=False, type=bool, help="Whether to select the best image from the generated images")
-    
+    p1.add_argument('--demo', default=False, type=bool, help="Whether you want to have a demo where the outputs from all the models will be printed (works in a colab notebook).")
     # Dataset
     p2 = main_parser.add_parser('dataset')
     p2.add_argument('--dataset', default=None, type=str, choices=[d.value for d in DatasetType], help='Dataset to get prompts from')
@@ -53,8 +53,8 @@ def main():
     p5.add_argument('--system_prompt', default='config/templates/model_role.txt', type=str, help='Path to system prompt to use for language model')
     p5.add_argument('--similarity_template', default='config/templates/default_similarity_template.txt', type=str, help='Path to template to use for similarity check')
     p5.add_argument('--system_sim_prompt', default='config/templates/model_role_similarity.txt', type=str, help='Path to system prompt to use for similarity check')
-    p5.add_argument('--best_image_template', default='config/templates/default_best_image_template.txt', type=str, help='Path to template to use for best image selection')
-    p5.add_argument('--system_best_image_prompt', default='config/templates/model_role_best_image.txt', type=str, help='Path to system prompt to use for best image selection')
+    p5.add_argument('--best_image_template', default='config/templates/chatgpt_best_image_template.txt', type=str, help='Path to template to use for best image selection')
+    p5.add_argument('--system_best_image_prompt', default='config/templates/chatgpt_best_image_system_template.txt', type=str, help='Path to system prompt to use for best image selection')
                         
     args = main_parser.parse_args()
     args = {k:vars(v) for k,v in vars(args).items()}
