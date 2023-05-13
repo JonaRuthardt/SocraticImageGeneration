@@ -405,7 +405,7 @@ if __name__ == "__main__":
             else:
                 all_results = pd.merge(all_results, results, on=joiner, how='left')
         # Save the results to csv
-        all_results.to_csv(os.path.join(os.getcwd(), f'data/results/{kwargs["experiment_name"]}', f'all_results_{kwargs["experiment_name"]}.tsv'),
+        all_results.to_csv(os.path.join(os.getcwd(), f'data/results/{kwargs["experiment_name"]}', f'evaluation.tsv'),
                                index=False, sep="\t")
 
     else:
