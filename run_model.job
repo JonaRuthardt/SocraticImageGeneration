@@ -4,8 +4,8 @@
 #SBATCH --gres=gpu:1
 #SBATCH --job-name=InstallEnvironment
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=4
-#SBATCH --time=08:00:00
+#SBATCH --cpus-per-task=2
+#SBATCH --time=10:00:00
 #SBATCH --mem=32000M
 #SBATCH --output=model_inference_%A.out
 
@@ -14,8 +14,12 @@ module load 2022
 module load Anaconda3/2022.05
 source activate DL2
 
+
+srun python -m model.run_model pipeline --mode full_experiment --experiment_name full_experiment_V1_coco --terminate_on_similarity True --select_best_image True dataset --dataset cococaption-small language_model --template config/templates/chatgpt_template_V1.txt --system_prompt config/templates/chatgpt_system_prompt_V1.txt --system_best_image_prompt config/templates/chatgpt_best_image_system_template.txt --best_image_template config/templates/chatgpt_best_image_template.txt
+srun python -m model.run_model pipeline --mode full_experiment --experiment_name full_experiment_V1_parti --terminate_on_similarity True --select_best_image True dataset --dataset parti-prompts-small language_model --template config/templates/chatgpt_template_V1.txt --system_prompt config/templates/chatgpt_system_prompt_V1.txt --system_best_image_prompt config/templates/chatgpt_best_image_system_template.txt --best_image_template config/templates/chatgpt_best_image_template.txt
+
 #srun python -m model.run_model pipeline --experiment_name evaluation1 dataset --dataset parti-prompts
-srun python -m model.run_model pipeline --experiment_name dataset_test_parti_gs_10 image_generator --guidance_scale 10 dataset --dataset parti-prompts-small language_model --template config/templates/chatgpt_template_V1.txt --system_prompt config/templates/chatgpt_system_prompt_V1.txt 
-srun python -m model.run_model pipeline --experiment_name dataset_test_flickr_gs_10 image_generator --guidance_scale 10 dataset --dataset flickr30k-small language_model --template config/templates/chatgpt_template_V1.txt --system_prompt config/templates/chatgpt_system_prompt_V1.txt    
-srun python -m model.run_model pipeline --experiment_name dataset_test_coco_gs_10 image_generator --guidance_scale 10 dataset --dataset cococaption-small language_model --template config/templates/chatgpt_template_V1.txt --system_prompt config/templates/chatgpt_system_prompt_V1.txt    
+# srun python -m model.run_model pipeline --experiment_name dataset_test_parti_SD2p1 image_generator --model stabilityai/stable-diffusion-2-1  dataset --dataset parti-prompts-small language_model --template config/templates/chatgpt_template_V1.txt --system_prompt config/templates/chatgpt_system_prompt_V1.txt 
+# srun python -m model.run_model pipeline --experiment_name dataset_test_flickr_SD2p1 image_generator --model stabilityai/stable-diffusion-2-1 dataset --dataset flickr30k-small language_model --template config/templates/chatgpt_template_V1.txt --system_prompt config/templates/chatgpt_system_prompt_V1.txt    
+# srun python -m model.run_model pipeline --experiment_name dataset_test_coco_SD2p1 image_generator --model stabilityai/stable-diffusion-2-1 dataset --dataset cococaption-small language_model --template config/templates/chatgpt_template_V1.txt --system_prompt config/templates/chatgpt_system_prompt_V1.txt    
 # srun python -m model.run_model pipeline --experiment_name dataset_test_coco dataset --dataset cococaption-small language_model --template config/templates/chatgpt_template_V1.txt --system_prompt config/templates/chatgpt_system_prompt_V1.txt    
