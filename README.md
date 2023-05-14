@@ -94,6 +94,9 @@ Group of arguments:
     StableDiffusionV2_1_Base = "stabilityai/stable-diffusion-2-1-base" \
     StableDiffusionV2_1 ="stabilityai/stable-diffusion-2-1"
 
+**Available Image Captioning models to use:**
+>  BLIP_LARGE = "blip_large"\
+  BLIP2 = "blip_2"
 
 
 
