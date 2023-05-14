@@ -390,7 +390,10 @@ if __name__ == "__main__":
         caption_eval = CaptionEvaluation(**kwargs)
         llm_eval = LLMEvaluation(**kwargs)
 
-        evaluations = [clip_eval, img_sim_eval, caption_eval, llm_eval]
+        if os.path.isfile(os.path.join(os.getcwd(), f'data/results/{kwargs["experiment_name"]}/000000/original_image.png')):
+            evaluations = [clip_eval, caption_eval, llm_eval]
+        else:
+            evaluations = [clip_eval, img_sim_eval, caption_eval, llm_eval]
 
         # Define common columns for all evaluation results
         joiner = ["prompt_id", "image_id", "user_prompt", "optimized_prompt", "caption", "image_path"]
@@ -405,7 +408,7 @@ if __name__ == "__main__":
             else:
                 all_results = pd.merge(all_results, results, on=joiner, how='left')
         # Save the results to csv
-        all_results.to_csv(os.path.join(os.getcwd(), f'data/results/{kwargs["experiment_name"]}', f'all_results_{kwargs["experiment_name"]}.tsv'),
+        all_results.to_csv(os.path.join(os.getcwd(), f'data/results/{kwargs["experiment_name"]}', f'evaluation.tsv'),
                                index=False, sep="\t")
 
     else:
