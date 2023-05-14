@@ -390,7 +390,10 @@ if __name__ == "__main__":
         caption_eval = CaptionEvaluation(**kwargs)
         llm_eval = LLMEvaluation(**kwargs)
 
-        evaluations = [clip_eval, img_sim_eval, caption_eval, llm_eval]
+        if os.path.isfile(os.path.join(os.getcwd(), f'data/results/{kwargs["experiment_name"]}/000000/original_image.png')):
+            evaluations = [clip_eval, caption_eval, llm_eval]
+        else:
+            evaluations = [clip_eval, img_sim_eval, caption_eval, llm_eval]
 
         # Define common columns for all evaluation results
         joiner = ["prompt_id", "image_id", "user_prompt", "optimized_prompt", "caption", "image_path"]
