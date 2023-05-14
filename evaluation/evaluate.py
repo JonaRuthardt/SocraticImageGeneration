@@ -129,6 +129,9 @@ class CLIPScore(Evaluate):
                 continue
             prompts = self.load_prompts(prompt_folder)
             captions = self.load_captions(prompt_folder)
+            if len(captions) == len(prompts) - 1:
+                #TODO temporary fix for missing captions; main bug is already fixed
+                captions.append("")
 
             with torch.no_grad():
                 # Tokenize and encode user prompt
@@ -141,7 +144,10 @@ class CLIPScore(Evaluate):
                 images_features = self.encode_images(raw_images)
 
                 # calculate CLIP-based similarity score
-                scores = (100.0 * images_features @ user_prompt_features.T).data.cpu().squeeze(-1).numpy().tolist()
+                #scores = (100.0 * images_features @ user_prompt_features.T).data.cpu().squeeze(-1).numpy().tolist()
+                #features = torch.stack([torch.cosine_similarity(user_prompt_features, features) for features in images_features])
+                features = torch.cosine_similarity(user_prompt_features, images_features, dim=-1)
+                scores = (2.5 * torch.max(torch.zeros(len(images_features)), torch.cosine_similarity(user_prompt_features, images_features, dim=-1).data.cpu()).numpy()).tolist()
 
             # delete some objects due to OOM issues
             del user_prompt, user_prompt_features, images_features, raw_images
@@ -160,7 +166,7 @@ class CLIPScore(Evaluate):
         Save evaluation results to file
         """
         self.results_df = pd.DataFrame.from_dict(self.result_dict)
-        self.results_df.to_csv(os.path.join(self.experiment_folder, f"results_clipscore_{self.experiment_name}.tsv"), index=False, sep="\t")
+        self.results_df.to_csv(os.path.join(self.experiment_folder, f"results_clipscore_{self.experiment_name.split('/')[-1]}.tsv"), index=False, sep="\t")
 
 class ImageSimilarity(Evaluate):
     """
@@ -201,6 +207,9 @@ class ImageSimilarity(Evaluate):
                 continue
             prompts = self.load_prompts(prompt_folder)
             captions = self.load_captions(prompt_folder)
+            if len(captions) == len(prompts) - 1:
+                #TODO temporary fix for missing captions; main bug is already fixed
+                captions.append("")
 
 
             with torch.no_grad():
@@ -230,7 +239,7 @@ class ImageSimilarity(Evaluate):
         Save evaluation results to file.
         """
         self.results_df = pd.DataFrame.from_dict(self.result_dict)
-        self.results_df.to_csv(os.path.join(self.experiment_folder, f"results_image_similarity_{self.experiment_name}.tsv"), index=False, sep="\t")
+        self.results_df.to_csv(os.path.join(self.experiment_folder, f"results_image_similarity_{self.experiment_name.split('/')[-1]}.tsv"), index=False, sep="\t")
 
 class CaptionEvaluation(Evaluate):
     """
@@ -267,6 +276,9 @@ class CaptionEvaluation(Evaluate):
                 continue
             prompts = self.load_prompts(prompt_folder)
             captions = self.load_captions(prompt_folder)
+            if len(captions) == len(prompts) - 1:
+                #TODO temporary fix for missing captions; main bug is already fixed
+                captions.append("")
 
 
 
@@ -297,7 +309,7 @@ class CaptionEvaluation(Evaluate):
         Save evaluation results to file
         """
         self.results_df = pd.DataFrame.from_dict(self.result_dict)
-        self.results_df.to_csv(os.path.join(self.experiment_folder, f"results_caption_score_{self.experiment_name}.tsv"),
+        self.results_df.to_csv(os.path.join(self.experiment_folder, f"results_caption_score_{self.experiment_name.split('/')[-1]}.tsv"),
                                index=False, sep="\t")
 
 
@@ -335,6 +347,9 @@ class LLMEvaluation(Evaluate):
                 continue
             prompts = self.load_prompts(prompt_folder)
             captions = self.load_captions(prompt_folder)
+            if len(captions) == len(prompts) - 1:
+                #TODO temporary fix for missing captions; main bug is already fixed
+                captions.append("")
             terminated_at, best_image_num = self.terminated_and_best_image(prompt_folder)
 
             original_prompt = prompts[0]

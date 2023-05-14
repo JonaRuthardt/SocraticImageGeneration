@@ -45,35 +45,36 @@ class Pipeline:
                 
             json.dump(convert_dict2str(self.hyperparameters), f, sort_keys=True, indent=4)
 
-        self.dataset = kwargs.get('dataset',{}).get("dataset", None)
-        if self.dataset is not None:
+        self.dataset_name = kwargs.get('dataset',{}).get("dataset", None)
+        self.dataset = None
+        if self.dataset_name is not None:
             # Load and configure dataset
-            if self.dataset == "parti-prompts":
+            if self.dataset_name == "parti-prompts":
                 self.dataset = datasets.load_dataset("nateraw/parti-prompts", split="train")["Prompt"]
-            elif self.dataset == "parti-prompts-small":
+            elif self.dataset_name == "parti-prompts-small":
                 self.dataset = datasets.load_dataset("nateraw/parti-prompts", split="train")["Prompt"]
                 self.dataset = [self.dataset[i] for i in range(0, len(self.dataset), len(self.dataset)//50)]
-            elif self.dataset == "flickr30k":
+            elif self.dataset_name == "flickr30k":
                 dataset = datasets.load_dataset("embedding-data/flickr30k-captions", split="train")
                 self.dataset = [d[0] for d in dataset["set"]]
-            elif self.dataset == "flickr30k-small":
+            elif self.dataset_name == "flickr30k-small":
                 dataset = datasets.load_dataset("embedding-data/flickr30k-captions", split="train")
                 self.dataset = [d[0] for d in dataset["set"]]
                 self.dataset = [self.dataset[i] for i in random.sample(range(len(self.dataset)), 50)]
-            elif self.dataset == "cococaption-small":
+            elif self.dataset_name == "cococaption-small":
                 annotations = pd.read_csv("data/datasets/coco-small/annotations.tsv", sep="\t")
                 self.dataset = annotations["caption 1"].tolist()
-                self.original_images = annotations["file_name"].tolist()
-            elif self.dataset == "cococaption-medium":
+                self.original_images = ("data/datasets/coco-small/" + annotations["file_name"]).tolist()
+            elif self.dataset_name == "cococaption-medium":
                 annotations = pd.read_csv("data/datasets/coco-medium/annotations.tsv", sep="\t")
                 self.dataset = annotations["caption 1"].tolist()
-                self.original_images = annotations["file_name"].tolist()
-            elif self.dataset == "cococaption-large":
+                self.original_images = ("data/datasets/coco-medium/" + annotations["file_name"]).tolist()
+            elif self.dataset_name == "cococaption-large":
                 annotations = pd.read_csv("data/datasets/coco-large/annotations.tsv", sep="\t")
                 self.dataset = annotations["caption 1"].tolist()
-                self.original_images = annotations["file_name"].tolist()
+                self.original_images = ("data/datasets/coco-large/" + annotations["file_name"]).tolist()
             else:
-                raise ValueError(f"Unknown dataset {self.dataset}")
+                raise ValueError(f"Unknown dataset {self.dataset_name}")
 
             # Execute dataset-based experiment pipeline
             #TODO do we always directly want to execute it here or implement running the experiments outside of the pipeline?
@@ -138,7 +139,7 @@ class Pipeline:
                 image_to_show.show()
 
         # Generate caption for final image
-        if terminated == -1:
+        if terminated == -1 or self.pipeline_mode == "full_experiment":
             caption = self.image_captioning.generate_caption(image)
             captions.append(caption)
 
@@ -174,8 +175,8 @@ class Pipeline:
             folder_name = str(i).zfill(6)
             folder_name = os.path.join(self.path, folder_name)
             os.makedirs(folder_name, exist_ok=False)
-            if self.dataset in ["cococaption-small", "cococaption-medium", "cococaption-large"]:
-                original_image = Image.open(self.original_images[i])
+            if self.dataset_name in ["cococaption-small", "cococaption-medium", "cococaption-large"]:
+                original_image = Image.open(os.path.join(self.original_images[i]))
                 original_image.save(os.path.join(folder_name, f"original_image.png"))
             start = time.time()
             try:

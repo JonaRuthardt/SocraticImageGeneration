@@ -32,7 +32,7 @@ def main():
     p3.add_argument('--model', default=ImageGeneratorType.StableDiffusionV2_1.value, type=str, choices=[m.value for m in ImageGeneratorType], help='Image generator model')
     p3.add_argument('--device_map', default=device, type=str, help="Device to run image generator on.")
     p3.add_argument('--torch_dtype', default=precision, type=torch.dtype, help="Model Precision.")
-    p3.add_argument('--seed', default=None, type=int, help="The seed for the model.")
+    p3.add_argument('--seed', default=42, type=int, help="The seed for the model.")
     p3.add_argument('--num_inference_steps', default=50, type=int, help="Number of inference steps. The more the better results but more execution time.")
     p3.add_argument('--guidance_scale', default=7.5, type=float, help="Classifier free guidance forces the generation to better match with the prompt.")
     p3.add_argument('--height', default=512, type=int, help="Height of the image to be generated.")
