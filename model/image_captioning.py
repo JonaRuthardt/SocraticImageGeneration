@@ -106,8 +106,8 @@ class Blip2(CaptioningModel):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        self.processor = AutoProcessor.from_pretrained("Salesforce/blip2-opt-2.7b")
         self.device = kwargs["device_map"]
+        self.processor = AutoProcessor.from_pretrained("Salesforce/blip2-opt-2.7b")
         self.model = Blip2ForConditionalGeneration.from_pretrained("Salesforce/blip2-opt-2.7b", torch_dtype=torch.float16).to(self.device)
 
     def generate_caption(self, image: Image):
