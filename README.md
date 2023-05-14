@@ -94,12 +94,24 @@ Group of arguments:
     StableDiffusionV2_1_Base = "stabilityai/stable-diffusion-2-1-base" \
     StableDiffusionV2_1 ="stabilityai/stable-diffusion-2-1"
 
+**Available Image Captioning models to use:**
+>  BLIP_LARGE = "blip_large"\
+  BLIP2 = "blip_2"
 
 
 
 ## Evaluation
-srun python -m evaluation.evaluate --experiment_name xxx --evaluation_method xxx ["clipscore", "image_similarity", "caption_score", "llm_eval", "all"]
 
-### Generating CLIPScores
+You can use the following command to evaluate the results that you produce by running the pipeline.
+### Generating Scores
+> ```python -m evaluation.evaluate --experiment_name DEMO_EXP_EVAL --evaluation_method all ```
 
-### Interpreting CLIPScores
+
+
+**Available evaluation methods:**
+>"clipscore", "image_similarity", "caption_score", "llm_eval", "all"
+
+### Interpreting Evaluation scores
+For better understanding and visualization of the evaluation scores we created a notebook with visualization of the results.
+You can see tables and charts for each score individually and combined if you have scores from all the evaluation methods.
+The notebook can be found in /evaluation/evaluation_results.ipynb
