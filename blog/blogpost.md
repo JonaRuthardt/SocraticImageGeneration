@@ -154,9 +154,25 @@ Notwithstanding the largely unchartered territory of evaluating the proposed pip
 
 ## Evaluation Data
 
-Yet another challenge surfaces when it comes to the type of dataset to use for evaluation. 
+Yet another challenge surfaces when it comes to the type of dataset to use for evaluation. In principle, there are two main classes of datasets that can applied in this situation.
 
-- COCO dataset
+### Prompt Datasets
+
+Most closely aligned with the objective of the proposed approach are datasets that are intentionally created or accrued for image generation. 
+
+Due to containing more then 14 million pairs of user prompts and generated images, DiffusionDB [^DDB] is a common dataset choice especially if any training or fine-tuning is required (e.g. [^OP]). The large size comes with no oversight and adequate supervision over the data’s quality, however. Additionally, interacting with the image generation pipeline that was used to collect data presupposes a certain technical sophistication that novice user likely not possess. This bias towards more advanced and knowledgeable users will consequently also be reflected in the type and style of prompts. 
+
+The PartiPrompts dataset [^PP], on the other hand, is comprised of 1600 hand-crafted prompts specifically designed to stress performance on challenging generation tasks. Despite the considerably smaller size, it still encompasses prompts across a multitude of different categories and levels of abstraction and complexity. 
+
+Because of these properties and the high overall quality, PartiPrompts was used as the prompt-based dataset of choice.
+
+### Image Captioning Datasets
+
+In contrast to the much more recent emergence of prompt datasets, the task of image captioning and corresponding datasets have been ubiquitous for some time now. With both large-scale datasets based on web-scraped image-caption pairs and ones humanly annotated by experts readily available, choices for the specific kind of dataset abound. Moreover, while presumably constituting a certain distributional discrepancy from the types of prompts fed into image generators by end users, these datasets are usually more representative of the entire space of conceivable images and more akin to the data image generators were trained on. 
+
+Chosen because of its general and human-generated nature, the COCO Captions dataset [^CC] was used as the surrogate of this second class of datasets. 
+
+TODO: Detail sub-sampling strategy and final dataset configuration
 
 ## Qualitative Evaluation
 
@@ -165,9 +181,13 @@ Yet another challenge surfaces when it comes to the type of dataset to use for e
 
 ## Quantitative Evaluation
 
+Despite human appraisals being the ultimate benchmark for the suitability of the proposed approach, acquiring such measurements is an expensive endeavor and not scalable for more comprehensive analysis of the framework’s properties. Moreover, subjective preferences are inherent to the qualitative evaluation process and can bias or sway results if not accounted for or averaged over sufficient sample size. Consequently, more rigorous quantitative methods are required that mitigate these shortcomings.
+
+The general appearance and aesthetic composition of an image can be assessed by no-reference metrics (e.g., NROM, BRISQUE) or distribution metrics (e.g., FID, IS). These approaches fail to gauge the correspondence between original prompt and generated image, however. Therefore, the following will detail two methods that measure the similarity between different reference quantities and the generated image.
+
 ### CLIPScore
 
-One commonly used metric (e.g., [^OP], [^ReP]) to score the similarity between an image and corresponding text is the CLIPScore as proposed in [^CS]. Due to its high correlation with human judgements, this metric is well geared for this application. Additionally, it was shown to outperform more traditional reference-based metrics such as SPICE. 
+One commonly used metric (e.g., [^OP], [^ReP]) to score the similarity between an image and corresponding text is the CLIPScore as proposed in [^CS]. Due to its high correlation with human judgements, this metric is well geared for this application. Additionally, it was shown to outperform more traditional reference-based metrics such as SPICE [^CS]. 
 
 The CLIPScore is calculated using the cosine similarity between an embedded image $\textbf{v}$ and an embedded text feature $\textbf{t}$ with a $\max$-function and an empirically determined $w=2.5$ to restrain the scores to $s \in [0,1]$:
 
@@ -175,7 +195,13 @@ $$
 \text{CLIPScore}=w*\max(\cos(\textbf{v},\textbf{t}),0)
 $$
 
+Thanks to the nature of it’s pre-training objective, images and text that are semantically similar are more closely arranged in the shared latent space und subsequently yield higher scores. The reported CLIPScores where generated using the ViT-B-32 variant of the OpenCLIP model [^OC]. 
+
 ### Image Similarity
+
+Given a textual prompt, the objective of the proposed framework is to generate an corresponding image. When drawing on captioning datasets to extract user prompts, a proxy target in the form of the image on which basis the caption was created is arguably already available. Therefore, an alternative measure of the approach’s efficacy may reside in the comparison of the generated and the reference image. Assessing the similarity of images is no trivial feat, however, especially when being conditioned by a reference text. Since captions usually omit many specific and visually decisive pieces of information, multitudinous depictions with vastly differing overall appearances might similarly align with the prompt. 
+
+To address this challenge, both images are mapped into a semantically more expressive latent space using previously specific OpenCLIP [^OC] image encoder. The cosine similarity between the resulting feature vectors is then taken as a measure of how well the generated image corresponds to the reference. 
 
 ### Number of Improvement Cycles
 
@@ -272,3 +298,11 @@ for Visio-Linguistic Compositionality. 2022. arXiv: 2204.03162 [cs.CV].
 soning with Language. 2022. arXiv: 2204.00598 [cs.CV]
 
 [^CS]: Jack Hessel et al. CLIPScore: A Reference-free Evaluation Metric for Image Captioning. 2022. [https://arxiv.org/abs/2104.08718](https://arxiv.org/abs/2104.08718)
+
+[^OC]: Gabriel Ilharco et al. OpenCLIP. 2022
+
+[^PP]: Jiahui Yu et al. Pathways Autoregressive Text-to-Image (Parti) - PartiPrompts Dataset. 2022. https://github.com/google-research/parti
+
+[^DDB]: Jay Wang et al. Large-Scale Prompt Gallery Dataset for Text-to-Image Generative Models. 2022. [https://arxiv.org/abs/2210.14896](https://arxiv.org/abs/2210.14896)
+
+[^CC]: Xinlei Chen et al. [Microsoft COCO Captions: Data Collection and Evaluation Server](https://paperswithcode.com/paper/microsoft-coco-captions-data-collection-and). 2015
