@@ -405,7 +405,7 @@ if __name__ == "__main__":
         caption_eval = CaptionEvaluation(**kwargs)
         llm_eval = LLMEvaluation(**kwargs)
 
-        if os.path.isfile(os.path.join(os.getcwd(), f'data/results/{kwargs["experiment_name"]}/000000/original_image.png')):
+        if not os.path.isfile(os.path.join(os.getcwd(), f'data/results/{kwargs["experiment_name"]}/000000/original_image.png')):
             evaluations = [clip_eval, caption_eval, llm_eval]
         else:
             evaluations = [clip_eval, img_sim_eval, caption_eval, llm_eval]
