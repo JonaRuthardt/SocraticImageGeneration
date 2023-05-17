@@ -54,6 +54,9 @@ class Pipeline:
             elif self.dataset_name == "parti-prompts-small":
                 self.dataset = datasets.load_dataset("nateraw/parti-prompts", split="train")["Prompt"]
                 self.dataset = [self.dataset[i] for i in range(0, len(self.dataset), len(self.dataset)//50)]
+            elif self.dataset_name == "parti-prompts-medium":
+                self.dataset = datasets.load_dataset("nateraw/parti-prompts", split="train")["Prompt"]
+                self.dataset = [self.dataset[i] for i in range(0, len(self.dataset), len(self.dataset)//200)]
             elif self.dataset_name == "flickr30k":
                 dataset = datasets.load_dataset("embedding-data/flickr30k-captions", split="train")
                 self.dataset = [d[0] for d in dataset["set"]]
