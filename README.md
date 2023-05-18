@@ -31,11 +31,12 @@ conda activate SIG
 To use the pipeline an OpenAI API Key is **required**, please add that in the config/openai_api_key.txt file, or 
 provide the path using language_model --api_key_path argument (the key should be the only value in that file).
 
+# ADD SOMETHING FOR THE DATA (COCO)
 ### Executing Pipeline for a Dataset
 
 You can run the following command to execute the Pipeline for a dataset. More options for the experiments can be found 
 below. The default values of the experiments can be found be providing the '--help' parameter to  the run_model module. 
-> ```python -m model.run_model pipeline --experiment_name DEMO_EXPERIMENT --select_best_image True dataset --dataset cococaption-small language_model --template config/templates/chatgpt_template_V1.txt --system_prompt config/templates/chatgpt_system_prompt_V1.txt --system_best_image_prompt config/templates/chatgpt_best_image_system_template.txt --best_image_template config/templates/chatgpt_best_image_template.txt```
+> ```python -m model.run_model pipeline --experiment_name DEMO_EXPERIMENT ```
 
 ### Executing Pipeline for a Single Prompt
 Change the {prompt_to_use} argument with your prompt.
@@ -102,9 +103,10 @@ Group of arguments:
 
 ## Evaluation
 
-You can use the following command to evaluate the results that you produce by running the pipeline.
+You can use the following command to evaluate the results that you produce by running the pipeline. 
+(change the DEMO_EXP_EVAL with the name that you gave to the experiment)
 ### Generating Scores
-> ```python -m evaluation.evaluate --experiment_name DEMO_EXP_EVAL --evaluation_method all ```
+> ```python -m evaluation.evaluate --experiment_name DEMO_EXPERIMENT --evaluation_method all ```
 
 
 
