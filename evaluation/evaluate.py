@@ -384,7 +384,7 @@ class LLMEvaluation(Evaluate):
         Save evaluation results to file
         """
         self.results_df = pd.DataFrame.from_dict(self.result_dict)
-        self.results_df.to_csv(os.path.join(self.experiment_folder, f"llm_eval_{self.experiment_name}.tsv"),
+        self.results_df.to_csv(os.path.join(self.experiment_folder, f"llm_eval_{self.experiment_name.split('/')[-1]}.tsv"),
                                index=False, sep="\t")
 
 
