@@ -26,17 +26,32 @@ conda activate SIG
 [//]: # (Folder structure &#40;are all necessary folders created when cloning the repository&#41;)
 
 
+
+
 ## Running the Pipeline
 ### Important
 To use the pipeline an OpenAI API Key is **required**, please add that in the config/openai_api_key.txt file, or 
 provide the path using language_model --api_key_path argument (the key should be the only value in that file).
 
-# ADD SOMETHING FOR THE DATA (COCO)
+
+### Constructing the necessary subsets of COCO dataset 
+For the experiments we used subsets of COCO dataset. To create the same subsets (and be able to run the experiments) use
+this [Notebook](data/datasets/COCO_Captions_Data_Subsampling.ipynb).
+
+## Reproducing the results
+To reproduce the results that we present in the blogpost you need to run the following 2 commands:
+(Keep in mind that the models are not returning always the same results, prompt and images, thus the reproduced
+results might be different from the original)
+
+> ```python -m model.run_model pipeline --model full_experiment --experiment_name full_experiment_coco dataset cococaption-medium ```
+
+> ```python -m model.run_model pipeline --model full_experiment --experiment_name full_experiment_parti dataset parti-prompts-medium```
+
 ### Executing Pipeline for a Dataset
 
 You can run the following command to execute the Pipeline for a dataset. More options for the experiments can be found 
 below. The default values of the experiments can be found be providing the '--help' parameter to  the run_model module. 
-> ```python -m model.run_model pipeline --experiment_name DEMO_EXPERIMENT ```
+> ```python -m model.run_model pipeline --model full_experiment --experiment_name DEMO_EXPERIMENT ```
 
 ### Executing Pipeline for a Single Prompt
 Change the {prompt_to_use} argument with your prompt.
@@ -84,6 +99,7 @@ Group of arguments:
 > Flickr30k = "flickr30k" \
     PartiPrompts = "parti-prompts" \
     PartiPromptsSmall = "parti-prompts-small" \
+    PartiPromptsMedium = "parti-prompts-medium"\
     Flickr30kSmall = "flickr30k-small" \
     CocoCaptionSmall = "cococaption-small" \
     CocoCaptionMedium = "cococaption-medium" \
@@ -108,6 +124,7 @@ You can use the following command to evaluate the results that you produce by ru
 ### Generating Scores
 > ```python -m evaluation.evaluate --experiment_name DEMO_EXPERIMENT --evaluation_method all ```
 
+Furthermore, you can use the [Evaluation Notebook](evaluation/evalution_results.ipynb) to visualize the results.
 
 
 **Available evaluation methods:**
