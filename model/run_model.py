@@ -23,7 +23,7 @@ def main():
     p1.add_argument('--demo', default=False, type=bool, help="Whether you want to have a demo where the outputs from all the models will be printed (works in a colab notebook).")
     # Dataset
     p2 = main_parser.add_parser('dataset')
-    p2.add_argument('--dataset', default='dataset parti-prompts-small', type=str, choices=[d.value for d in DatasetType], help='Dataset to get prompts from')
+    p2.add_argument('--dataset', default='parti-prompts-small', type=str, choices=[d.value for d in DatasetType], help='Dataset to get prompts from')
     p2.add_argument('--prompt', default=None, type=str)
     #TODO add dataset-specific arguments
 
