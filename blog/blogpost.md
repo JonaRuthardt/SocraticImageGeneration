@@ -1,11 +1,11 @@
 # Deep Learning 2 - Socratic Image Generation
 
-> Jona Ruthardt, Theodora-Mara Pîslar, Valentinos Pariza, Andreas Giorkatzi, Slawomir Garcarz
+> Jona Ruthardt, Theodora-Mara Pîslar, Valentinos Pariza, Andreas Giorkatzi, Sławomir Garcarz
 > 
 
 # Introduction
 
-The advent of recent generative image models (e.g., DALL·E [^DLE]) has allowed any user to creatively express themselves using arbitrary textual prompts. However, it is often required to do extensive trial-and-error-based prompt engineering to obtain high-quality generations that are aligned with the user intent.
+The [advent](#methodology-digest) of recent generative image models (e.g., DALL·E [^DLE]) has allowed any user to creatively express themselves using arbitrary textual prompts. However, it is often required to do extensive trial-and-error-based prompt engineering to obtain high-quality generations that are aligned with the user intent.
 
 We address this problem, by expanding the notion of Socratic Models [^SM] to the image generation task. Through combining various multi-model pre-trained models, we can leverage the generic real-world knowledge contained in large language models to verify and continuously improve the generation performance and ultimately end up with images that are more in line with user expectations.
 
