@@ -294,17 +294,17 @@ In order to determine the effect of each of these problem mitigations, they were
 
 | COCO | CLIPScore at Termination | Early Stopping [%] | Maximum CLIPScore |
 | --- | --- | --- | --- |
-| Original Template | 0.798 | 73.5 | 0.875 |
+| Original Template | **0.798** | **73.5** | **0.875** |
 | Format | 0.789 | 68.5 | 0.869 |
 | Verbosity | 0.789 | 68 | 0.871 |
 | Orotundity | 0.793 | 66.0 | 0.871 |
 
 | PartiPrompts | CLIPScore at Termination | Early Stopping [%] | Maximum CLIPScore |
 | --- | --- | --- | --- |
-| Original Template | 0.777 | 47.55 | 0.879 |
+| Original Template | 0.777 | **47.55** | **0.879** |
 | Format | 0.766 | 46.57 | 0.873 |
 | Verbosity | 0.769 | 44.12 | 0.877 |
-| Orotundity | 0.778 | 47.55 | 0.879 |
+| Orotundity | **0.778** | **47.55** | **0.879** |
 
 As is evident from these results, considering the additional text phrases mitigated some of the observed adverse effects as their removal led to decreased scores overall. The sole exception constitutes the *Orotundity* block for the PartiPrompts dataset which could have to do with the more abstract and impalpable nature of the base prompts. 
 
@@ -314,12 +314,12 @@ During the qualitative analysis, it was apparent that the captioning model occas
 
 | COCO | CLIPScore at Termination | Early Stopping [%] | Maximum CLIPScore |
 | --- | --- | --- | --- |
-| Original | 0.797 | 73.5 | 0.875 |
+| Original | **0.797** | **73.5** | **0.875** |
 | No caption | 0.751 | 64 | 0.854 |
 
 | PartiPrompts | CLIPScore at Termination | Early Stopping [%] | Maximum CLIPScore |
 | --- | --- | --- | --- |
-| Original | 0.798 | 73.5 | 0.875 |
+| Original | **0.798** | **73.5** | **0.875** |
 | No caption | 0.725 | 49.02 | 0.861 |
 
 A substantial impairment of the approach’s performance is apparent when not providing the LLM with previous captions. This is indicative of the importance of providing insights regarding how the generator actualizes prompts and the fact that the LLM can exploit this information to compensate for unwanted biases in the next prompt iteration.
