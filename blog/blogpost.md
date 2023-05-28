@@ -411,6 +411,53 @@ While our initial results underlined the feasibility of the proposed approach, p
     - Ablation Study
     - Blogpost
 
+# Appendix
+
+## Implementation Details
+
+## Computational Expenses
+
+Due to the limited computational resources available, it was not possible to conduct a extensive evaluation of various foundation models and informed model choices had to be made ex ante. The effect of different model characteristics (e.g., LLM with/without RLHF fine-tuning) can provide further insightful results.
+
+## **Image Generator**
+
+In our experiments we used StableDiffusion which is a Diffusion Model. Diffusion Models have two components: forward diffusion, where noise is added to an image, and reverse diffusion, which removes the noise using a noise predictor. While various Diffusion models exist, Stable Diffusion [^SD] is chosen for its open-source nature and faster computational speed as it operates on a smaller latent space compared to models like DALL·E [^DLE], which operate in a larger image space.
+
+## Choice of LLM
+
+The LLM model that we use needs to correctly model the user’s intent, identify whether the current depiction is already sufficiently similar, and make a decision on how the prompt could be improved to yield a more user-aligned image. As many of the characteristics desirable in this application (e.g., reasoning, instruction following, etc.) are shown to be emergent in language models of certain scales [^EA], it is essential to utilize a language model of appropriate size and capability. 
+
+During testing different LLMs we realized that for this task sufficiently large model is required as smaller models have problems with longer inputs and due to limited computational resources we could not use a model large enough to meet our expectations, therefore we decided to use ChatGPT (gpt-3.5-turbo) OpenAI API. 
+
+One important distinction of ChatGPT (gpt-3.5-turbo) is that it is an instruction-tuned model rather than a purely generative one. This means that it has been fine-tuned using a dataset of human-generated instructions and responses, which helps improve its ability to follow guidelines and provide desired outputs based on given prompts. This instruction-tuning process enables us to provide specific instructions to the model and receive more tailored and desired responses. Moreover, ChatGPT ensure better control over the system's output and is easier to align it more closely with our expectations.
+
+Depending on the exact LLM utilized, slight changes to the contents and formulations of the templates are warranted. While models fine-tuned on human feedback (e.g., ChatGPT) seem to benefit from instructional and commanding prompts, a more neutral and descriptive emphasis is required for models solely trained on next-character prediction. 
+
+Ideally, the generated images after each pass through the pipeline’s loop should be objectively superior to those created during previous iterations. Since designing prompts is no trivial and fully comprehensible matter, this must not necessarily be always the case. Furthermore, the generation process is highly stochastic, and even the same prompt might yield results of various grades for different seeds. 
+
+Therefore, we also investigate the means of selecting the best image, in a similar fashion to the aforementioned approach used to evaluate a termination criterion, we again utilize LLMs for this purpose. Given the already generated captions, the LLM is tasked to decide which one matches the user prompt most closely. The following templates are examples of how to formalize the LLM’s assignment:
+
+> System role for sample selection template:
+> 
+> 
+> ```
+> Given a set of <RANGE> captions for different images, select the image caption that best fits the original user prompt.
+> Only return the number of the image that is most closely related to the user prompt.
+> ```
+> 
+
+> Sample selection template:
+> 
+> 
+> ```
+> Original user prompt: <USER_PROMPT>
+> Captions of generated images:
+> <CAPTIONS>
+> ```
+> 
+
+This LLM-based approach is not the only conceivable termination criterium, however. Alternatively, scoring via CLIP could be employed where the images are encoded and compared with the encoded user prompts. The image-prompt pair most closely together in the shared latent space can be assumed to be the best visual representation of the original query. A multi-modal LLM could offer the additional advantage of incorporating textual and visual clues directly into a very powerful general-purpose model to identify the most similar combination without requiring a separate CLIP-based module.
+
 # References
 
 [^CID]: R. Vedantam, C. L. Zitnick, and D. Parikh, “Cider:
@@ -431,9 +478,7 @@ for automatic evaluation of machine translation,” in ACL, 2002.
 
 [^EA]: Jason Wei et al. Emergent Abilities of Large Language Models. 2022. [https://arxiv.org/abs/2112.10752](https://arxiv.org/abs/2206.07682)
 
-[^OP]:  Yaru Hao et al. Optimizing Prompts for Text-to-Image Generation. 2022.
-
-[https://arxiv.org/pdf/2212.09611](https://arxiv.org/pdf/2212.09611.pdf)
+[^OP]:  Yaru Hao et al. Optimizing Prompts for Text-to-Image Generation. 2022. [https://arxiv.org/pdf/2212.09611](https://arxiv.org/pdf/2212.09611.pdf)
 
 [^DLE]: Alec Radford et al. Learning Transferable Visual Models From Natural Language Supervision. 2021. arXiv: 2103.00020 [cs.CV].
 
@@ -473,51 +518,3 @@ pre-training with frozen image encoders and large language models,” 2023.
 [^FID]: Martin Heusel et al. GANs Trained by a Two Time-Scale Update Rule Converge to a Local Nash Equilibrium. 2017. [https://arxiv.org/abs/1706.08500](https://arxiv.org/abs/1706.08500)
 
 [^IS]: Tim Salimans et al. Improved Techniques for Training GANs. 2016 [https://arxiv.org/abs/1606.03498](https://arxiv.org/abs/1606.03498)
-
-# Appendix
-
-## Implementation Details
-
-## Computational Expenses
-
-Due to the limited computational resources available, it was not possible to conduct a extensive evaluation of various foundation models and informed model choices had to be made ex ante. The effect of different model characteristics (e.g., LLM with/without RLHF fine-tuning) can provide further insightful results.
-
-## **Image Generator**
-
-In our experiments we used StableDiffusion which is a Diffusion Model. Diffusion Models have two components: forward diffusion, where noise is added to an image, and reverse diffusion, which removes the noise using a noise predictor. While various Diffusion models exist, Stable Diffusion [^SD] is chosen for its open-source nature and faster computational speed as it operates on a smaller latent space compared to models like DALL·E [^DLE], which operate in a larger image space.
-
-## Choice of LLM
-
-The LLM model that we use needs to correctly model the user’s intent, identify whether the current depiction is already sufficiently similar, and make a decision on how the prompt could be improved to yield a more user-aligned image. As many of the characteristics desirable in this application (e.g., reasoning, instruction following, etc.) are shown to be emergent in language models of certain scales [^EA], it is essential to utilize a language model of appropriate size and capability. 
-
-During testing different LLMs we realized that for this task sufficiently large model is required as smaller models have problems with longer inputs and due to limited computational resources we could not use a model large enough to meet our expectations, therefore we decided to use ChatGPT (gpt-3.5-turbo) OpenAI API. 
-
-One important distinction of ChatGPT (gpt-3.5-turbo) is that it is an instruction-tuned model rather than a purely generative one. This means that it has been fine-tuned using a dataset of human-generated instructions and responses, which helps improve its ability to follow guidelines and provide desired outputs based on given prompts. This instruction-tuning process enables us to provide specific instructions to the model and receive more tailored and desired responses. Moreover, ChatGPT ensure better control over the system's output and is easier to align it more closely with our expectations.
-
-Depending on the exact LLM utilized, slight changes to the contents and formulations of the templates are warranted. While models fine-tuned on human feedback (e.g., ChatGPT) seem to benefit from instructional and commanding prompts, a more neutral and descriptive emphasis is required for models solely trained on next-character prediction. 
-
-
-Ideally, the generated images after each pass through the pipeline’s loop should be objectively superior to those created during previous iterations. Since designing prompts is no trivial and fully comprehensible matter, this must not necessarily be always the case. Furthermore, the generation process is highly stochastic, and even the same prompt might yield results of various grades for different seeds. 
-
-Therefore, we also investigate the means of selecting the best image, in a similar fashion to the aforementioned approach used to evaluate a termination criterion, we again utilize LLMs for this purpose. Given the already generated captions, the LLM is tasked to decide which one matches the user prompt most closely. The following templates are examples of how to formalize the LLM’s assignment:
-
-> System role for sample selection template:
-> 
-> 
-> ```
-> Given a set of <RANGE> captions for different images, select the image caption that best fits the original user prompt.
-> Only return the number of the image that is most closely related to the user prompt.
-> ```
-> 
-
-> Sample selection template:
-> 
-> 
-> ```
-> Original user prompt: <USER_PROMPT>
-> Captions of generated images:
-> <CAPTIONS>
-> ```
-> 
-
-This LLM-based approach is not the only conceivable termination criterium, however. Alternatively, scoring via CLIP could be employed where the images are encoded and compared with the encoded user prompts. The image-prompt pair most closely together in the shared latent space can be assumed to be the best visual representation of the original query. A multi-modal LLM could offer the additional advantage of incorporating textual and visual clues directly into a very powerful general-purpose model to identify the most similar combination without requiring a separate CLIP-based module.
