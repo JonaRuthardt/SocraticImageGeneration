@@ -435,43 +435,19 @@ for automatic evaluation of machine translation,” in ACL, 2002.
 
 [https://arxiv.org/pdf/2212.09611](https://arxiv.org/pdf/2212.09611.pdf)
 
-[^DLE] Alec Radford et al. Learning Transferable Visual Models From Natural Language Supervision. 2021. arXiv: 2103.00020 [cs.CV].
+[^DLE]: Alec Radford et al. Learning Transferable Visual Models From Natural Language Supervision. 2021. arXiv: 2103.00020 [cs.CV].
 
-[^ReP] Yunlong Wang, Shuyuan Shen, and Brian Y Lim. “RePrompt: Automatic
+[^ReP]: Yunlong Wang, Shuyuan Shen, and Brian Y Lim. “RePrompt: Automatic Prompt Editing to Refine AI-Generative Art Towards Precise Expressions”. 2023. https://doi.org/10.1145%2F3544548.3581402
 
-Prompt Editing to Refine AI-Generative Art Towards Precise Expressions”.
+[^HP]: Yuxin Wen et al. Hard Prompts Made Easy: Gradient-Based Discrete Optimization for Prompt Tuning and Discovery. 2023.
 
-In: Proceedings of the 2023 CHI Conference on Human Factors in Com-
+[^GAN]: Ian Goodfellow et al. Generative Adversarial Networks. 2014. http://arxiv.org/abs/1406.2661
 
-puting Systems. ACM, Apr. 2023. doi: 10.1145/3544548.3581402. url:
+[^CGAN]: Zhu, J.-Y., Park, T., Isola, P., & Efros, A. A. (2020). Unpaired Image-to-Image Translation using Cycle-Consistent Adversarial Networks. *ArXiv [Cs.CV]*.  http://arxiv.org/abs/1703.10593
 
-https://doi.org/10.1145%2F3544548.3581402.
+[^SGAN]: Tero Karras et al. A Style-Based Generator Architecture for Generative Adversarial Networks. 2019. http://arxiv.org/abs/1812.04948
 
-[^HP] Yuxin Wen et al. Hard Prompts Made Easy: Gradient-Based Discrete Op-
-
-timization for Prompt Tuning and Discovery. 2023. arXiv: 2302 . 03668
-
-[cs.LG].
-
-[^GAN] Goodfellow, I. J., Pouget-Abadie, J., Mirza, M., Xu, B., Warde-Farley, D., Ozair, S., … Bengio, Y. (2014). Generative Adversarial Networks. *ArXiv [Stat.ML]*. http://arxiv.org/abs/1406.2661
-
-[^CGAN] Zhu, J.-Y., Park, T., Isola, P., & Efros, A. A. (2020). Unpaired Image-to-Image Translation using Cycle-Consistent Adversarial Networks. *ArXiv [Cs.CV]*.  http://arxiv.org/abs/1703.10593
-
-[^SGAN] Karras, T., Laine, S., & Aila, T. (2019). A Style-Based Generator Architecture for Generative Adversarial Networks. *ArXiv [Cs.NE]*.  http://arxiv.org/abs/1812.04948
-
-[^] Aditya Ramesh et al. Zero-Shot Text-to-Image Generation. 2021. arXiv:
-
-2102.12092 [cs.CV].
-
-[^] Tristan Thrush et al. Winoground: Probing Vision and Language Models
-
-for Visio-Linguistic Compositionality. 2022. arXiv: 2204.03162 [cs.CV].
-
-[^] Andy Zeng et al. Socratic Models: Composing Zero-Shot Multimodal Rea-
-
-soning with Language. 2022. arXiv: 2204.00598 [cs.CV]
-
-[^CS]: Jack Hessel et al. CLIPScore: A Reference-free Evaluation Metric for Image Captioning. 2022. [https://arxiv.org/abs/2104.08718](https://arxiv.org/abs/2104.08718)
+[^CS]: Jack Hessel et al. CLIPScore: A Reference-free Evaluation Metric for Image Captioning. 2022. https://arxiv.org/abs/2104.08718
 
 [^OC]: Gabriel Ilharco et al. OpenCLIP. 2022
 
