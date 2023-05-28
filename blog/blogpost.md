@@ -229,14 +229,9 @@ Besides the qualitative evaluation of the pipeline developed, a more quantitativ
 
 ### Potential benefit of each Pipeline’s iteration
 
-<div style="display: flex; justify-content: space-between;">
+<div>
     <div style="text-align: center;">
-        <img src="images/coco_boxplot_blogpost.png" alt="Image 1" width="250" />
-        <p>QE-BP-1: COCO</p>
-    </div>
-    <div style="text-align: center;">
-        <img src="images/parti_boxplot_blogpost.png" alt="Image 2" width="250" />
-        <p>QE-BP-2: PartiPrompt</p>
+        <img src="images/plots_1.png" alt="Image 1" width="700" />
     </div>
 </div>
 
