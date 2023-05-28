@@ -73,7 +73,7 @@ In order to provide the language model with the necessary visual context, a capt
 
 ### Large Language Model
 
-Bearing the primary reasoning and decision-making role, the language model is at the core of understanding the semantical correspondence between the generated image and the original user prompt as well as proposing improved prompts on that basis. Our choice ultimately favored ChatGPT (gpt-3.5-turbo) [^GPT] for its still comparative recency, the exhibited performance across various domains, and straightforward API-based availability. Details about our decision can be found in the [Appendix](notion://www.notion.so/Deep-Learning-2-Socratic-Image-Generation-e06931ce9fda4ac6a206cee8015ecb1d?d=f482d28eee084636a632022a875a746e#choice-of-llm).
+Bearing the primary reasoning and decision-making role, the language model is at the core of understanding the semantical correspondence between the generated image and the original user prompt as well as proposing improved prompts on that basis. Our choice ultimately favored ChatGPT (gpt-3.5-turbo) [^GPT] for its still comparative recency, the exhibited performance across various domains, and straightforward API-based availability. Details about our decision can be found in the [Appendix](#choice-of-llm).
 
 **Templates**
 
