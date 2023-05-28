@@ -1,4 +1,4 @@
-# Deep Learning 2 - Socratic Image Generation
+# Socratic Image Generation
 
 > Jona Ruthardt, Theodora-Mara Pîslar, Valentinos Pariza, Andreas Giorkatzi, Sławomir Garcarz
 > 
