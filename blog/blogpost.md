@@ -234,17 +234,6 @@ Besides the qualitative evaluation of the pipeline developed, a more quantitativ
         <img src="images/plots_1.png" alt="Image 1" width="900" />
     </div>
 </div>
-<!-- 
-<div style="display: flex; justify-content: space-between;">
-    <div style="text-align: center;">
-        <img src="images/coco_boxplot_blogpost.png" alt="Image 1" width="500" />
-        <p>QE-PC-1: PartiPrompts</p>
-    </div>
-    <div style="text-align: center;">
-        <img src="images/parti_boxplot_blogpost.png" alt="Image 2" width="500" />
-        <p>QE-PC-2: COCO</p>
-    </div>
-</div> -->
 
 The figures above show the CLIPScores between the image obtained from different stages for the COCO Dataset (Left) and the PartiPrompt (Right). Both of the Figures allow for some noteworthy observations, which we describe below:
 
@@ -270,14 +259,9 @@ Last, we want to report that the percentage of times the terminated image is the
 
 ### Potential Benefit of Early Stopping
 
-<div style="display: flex; justify-content: space-between;">
+<div>
     <div style="text-align: center;">
-        <img src="images/pie_parti.png" alt="Image 1" width="250" />
-        <p>QE-PC-1: PartiPrompts</p>
-    </div>
-    <div style="text-align: center;">
-        <img src="images/pie_coco.png" alt="Image 2" width="274" />
-        <p>QE-PC-2: COCO</p>
+        <img src="images/plots_2.png" alt="Image 1" width="900" />
     </div>
 </div>
 
