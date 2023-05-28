@@ -42,9 +42,9 @@ To reproduce the results that we present in the blogpost you need to run the fol
 (Keep in mind that the models are not returning always the same results, prompt and images, thus the reproduced
 results might be different from the original)
 
-> ```python -m model.run_model pipeline --mode full_experiment --experiment_name full_experiment_coco dataset cococaption-medium ```
+> ```python -m model.run_model pipeline --mode full_experiment --experiment_name full_experiment_coco dataset --dataset cococaption-medium ```
 
-> ```python -m model.run_model pipeline --mode full_experiment --experiment_name full_experiment_parti dataset parti-prompts-medium```
+> ```python -m model.run_model pipeline --mode full_experiment --experiment_name full_experiment_parti dataset --dataset parti-prompts-medium```
 
 ### Executing Pipeline for a Dataset
 
