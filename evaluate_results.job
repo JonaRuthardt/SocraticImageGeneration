@@ -12,7 +12,7 @@
 module purge
 module load 2022
 module load Anaconda3/2022.05
-source activate DL2
+source activate SIG
 
 # control whether to run evaluation for all available folders or individual ones
 RUN_LOOP=true

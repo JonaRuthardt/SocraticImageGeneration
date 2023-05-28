@@ -43,15 +43,15 @@ To reproduce the results that we present in the blogpost you need to run the fol
 (Keep in mind that the models are not returning always the same results, prompt and images, thus the reproduced
 results might be different from the original)
 
-> ```python -m model.run_model pipeline --model full_experiment --experiment_name full_experiment_coco dataset cococaption-medium ```
+> ```python -m model.run_model pipeline --mode full_experiment --experiment_name full_experiment_coco dataset cococaption-medium ```
 
-> ```python -m model.run_model pipeline --model full_experiment --experiment_name full_experiment_parti dataset parti-prompts-medium```
+> ```python -m model.run_model pipeline --mode full_experiment --experiment_name full_experiment_parti dataset parti-prompts-medium```
 
 ### Executing Pipeline for a Dataset
 
 You can run the following command to execute the Pipeline for a dataset. More options for the experiments can be found 
 below. The default values of the experiments can be found be providing the '--help' parameter to  the run_model module. 
-> ```python -m model.run_model pipeline --model full_experiment --experiment_name DEMO_EXPERIMENT ```
+> ```python -m model.run_model pipeline --mode full_experiment --experiment_name DEMO_EXPERIMENT ```
 
 ### Executing Pipeline for a Single Prompt
 Change the {prompt_to_use} argument with your prompt.
@@ -96,10 +96,10 @@ Group of arguments:
     --system_best_image_prompt : String, Path to system prompt to use for best image selection
  
 **Available Datasets to use:**
-> Flickr30k = "flickr30k" \
-    PartiPrompts = "parti-prompts" \
+>   PartiPrompts = "parti-prompts" \
     PartiPromptsSmall = "parti-prompts-small" \
     PartiPromptsMedium = "parti-prompts-medium"\
+    Flickr30k = "flickr30k" \
     Flickr30kSmall = "flickr30k-small" \
     CocoCaptionSmall = "cococaption-small" \
     CocoCaptionMedium = "cococaption-medium" \
