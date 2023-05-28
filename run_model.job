@@ -12,10 +12,7 @@
 module purge
 module load 2022
 module load Anaconda3/2022.05
-source activate DL2
+source activate SIG
 
-
-#srun python -m evaluation.evaluate --experiment_name full_experiment_V2_coco --evaluation_method llm_eval
-#srun python -m evaluation.evaluate --experiment_name full_experiment_V2_parti --evaluation_method llm_eval
 srun python -m model.run_model pipeline --mode full_experiment --experiment_name TODO_coco --terminate_on_similarity True --select_best_image True dataset --dataset cococaption-medium language_model
 srun python -m model.run_model pipeline --mode full_experiment --experiment_name TODO_parti --terminate_on_similarity True --select_best_image True dataset --dataset parti-prompts-medium language_model 
