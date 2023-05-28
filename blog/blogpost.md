@@ -412,9 +412,6 @@ While our initial results underlined the feasibility of the proposed approach, p
     - Blogpost
 
 # Appendix
-
-## Implementation Details
-
 ## Computational Expenses
 
 Due to the limited computational resources available, it was not possible to conduct a extensive evaluation of various foundation models and informed model choices had to be made ex ante. The effect of different model characteristics (e.g., LLM with/without RLHF fine-tuning) can provide further insightful results.
