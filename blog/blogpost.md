@@ -13,11 +13,15 @@ We address this problem by expanding the notion of Socratic Models [^SM] to the 
 
 To illustrate this objective, consider the following example: a user wants to generate an image of a *“cat on a snowboard.”* When plugging this prompt into an image generator, the following output is obtained:
 
-![Untitled](images/Untitled.png)
+<div style="text-align: center;">
+    <img src="images/Untitled.png" alt="Image" width="200" />
+</div>
 
 While this image bears some relation to the original prompt, it arguably might not reflect the kind of depiction the user desired as the human intuition would presumably not picture a cartoonish version given the text snippet. By leveraging the more human-aligned propensities of large language models, the appearance and elements of the current image can be considered to propose a prompt that is probable to result in more desirable results. For the above image, which could, for instance, be transcribed as *”a skateboard with a cartoon cat on top of it,”* the language model did propose a prompt such as *“Create an image of a cat riding a snowboard on a snowy mountain terrain.”* This improved prompt does yield a supposedly more preferable image:
 
-![Untitled](images/Untitled%201.png)
+<div style="text-align: center;">
+    <img src="images/Untitled%201.png" alt="Image" width="200" />
+</div>
 
 We propose a novel processing pipeline adapted explicitly to obtain improved image generations as an extension of this concept to a previously unexplored application domain. Thanks to the zero-shot characteristics of Socratic Models, we can use large image generation, image captioning, and language models that would otherwise be computationally unfeasible and capitalize on their better generalizability and performance.
 
