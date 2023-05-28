@@ -7,7 +7,7 @@ with the user intent. We propose an iterative approach of a pipeline that given 
 prompt it generates an improved image by iteratively refining the prompt, from
 the history of generated images and their refined captions for that prompt.
 
-Code is available [here](https://github.com/JonaRuthardt/SocraticImageGeneration)
+Demo notebook is available [here](blog/Socratic_Image_Generation_Showcase.ipynb)
 
 ## Installation
 
