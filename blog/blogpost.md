@@ -231,9 +231,20 @@ Besides the qualitative evaluation of the pipeline developed, a more quantitativ
 
 <div>
     <div style="text-align: center;">
-        <img src="images/plots_1.png" alt="Image 1" width="700" />
+        <img src="images/plots_1.png" alt="Image 1" width="800" />
     </div>
 </div>
+<!-- 
+<div style="display: flex; justify-content: space-between;">
+    <div style="text-align: center;">
+        <img src="images/coco_boxplot_blogpost.png" alt="Image 1" width="500" />
+        <p>QE-PC-1: PartiPrompts</p>
+    </div>
+    <div style="text-align: center;">
+        <img src="images/parti_boxplot_blogpost.png" alt="Image 2" width="500" />
+        <p>QE-PC-2: COCO</p>
+    </div>
+</div> -->
 
 The figures above show the CLIPScores between the image obtained from different stages for the COCO Dataset (Left) and the PartiPrompt (Right). Both of the Figures allow for some noteworthy observations, which we describe below:
 
