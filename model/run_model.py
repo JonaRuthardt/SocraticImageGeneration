@@ -25,7 +25,6 @@ def main():
     p2 = main_parser.add_parser('dataset')
     p2.add_argument('--dataset', default='parti-prompts-small', type=str, choices=[d.value for d in DatasetType], help='Dataset to get prompts from')
     p2.add_argument('--prompt', default=None, type=str)
-    #TODO add dataset-specific arguments
 
     # Image generator
     p3 = main_parser.add_parser('image_generator')

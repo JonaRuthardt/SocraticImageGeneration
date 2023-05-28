@@ -22,8 +22,6 @@ def load_language_model(**kwargs):
     """
     print("Loading language model")
 
-    # TODO instanciate language model sub-class from given model name
-
     model_name = kwargs.get('model', LanguageModelType.chat_gpt.value)
     if model_name == LanguageModelType.chat_gpt.value:
         language_model = ChatGPT(**kwargs)
@@ -214,9 +212,7 @@ class LanguageModel():
         Returns:
             str: generated text
         """
-
-        #TODO query language model with prompt -> to be overwritten by sub-class
-
+        
         raise NotImplementedError
     
     def reset(self):
