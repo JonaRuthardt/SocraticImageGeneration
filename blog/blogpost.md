@@ -229,13 +229,11 @@ Besides the qualitative evaluation of the pipeline developed, a more quantitativ
 
 ### Potential benefit of each Pipeline’s iteration
 
-![QE-BP-1: COCO](images/coco_boxplot_blogpost.png)
-
-QE-BP-1: COCO
-
-![QE-BP-2: PartiPrompt](images/parti_boxplot_blogpost.png)
-
-QE-BP-2: PartiPrompt
+<div>
+    <div style="text-align: center;">
+        <img src="images/plots_1.png" alt="Image 1" width="900" />
+    </div>
+</div>
 
 The figures above show the CLIPScores between the image obtained from different stages for the COCO Dataset (Left) and the PartiPrompt (Right). Both of the Figures allow for some noteworthy observations, which we describe below:
 
@@ -261,13 +259,11 @@ Last, we want to report that the percentage of times the terminated image is the
 
 ### Potential Benefit of Early Stopping
 
-![QE-PC-1: PartiPrompts](images/pie_parti.png)
-
-QE-PC-1: PartiPrompts
-
-![QE-PC-2: COCO](images/pie_coco.png)
-
-QE-PC-2: COCO
+<div>
+    <div style="text-align: center;">
+        <img src="images/plots_2.png" alt="Image 1" width="900" />
+    </div>
+</div>
 
 The pie charts above depict the percentage of iterations in which the stopping criterion was triggered (sufficient similarity or maximum iterations reached) for the PartiPrompts Dataset (left) and the COCO dataset (right). Based on this, the following observations can be made:
 
