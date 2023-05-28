@@ -231,7 +231,7 @@ Besides the qualitative evaluation of the pipeline developed, a more quantitativ
 
 <div>
     <div style="text-align: center;">
-        <img src="images/plots_1.png" alt="Image 1" width="800" />
+        <img src="images/plots_1.png" alt="Image 1" width="900" />
     </div>
 </div>
 <!-- 
