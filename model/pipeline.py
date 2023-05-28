@@ -80,7 +80,6 @@ class Pipeline:
                 raise ValueError(f"Unknown dataset {self.dataset_name}")
 
             # Execute dataset-based experiment pipeline
-            #TODO do we always directly want to execute it here or implement running the experiments outside of the pipeline?
             self.generate_images_from_dataset(max_cycles=kwargs["pipeline"]["max_cycles"])
         elif kwargs.get('dataset',{}).get("prompt", None) is not None:
             # Execute single prompt experiment pipeline

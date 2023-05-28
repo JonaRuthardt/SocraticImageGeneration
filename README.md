@@ -17,7 +17,6 @@ conda env create -f environment.yaml
 ```
 
 To activate the created environment:
-#todo change the name in the .yaml file
 ```shell
 conda activate SIG
 ```

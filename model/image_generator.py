@@ -19,7 +19,7 @@ class ImageGeneratorType(enum.Enum):
 
 IMAGE_GENERATORS = frozenset(set([img_gen_t.value for img_gen_t in ImageGeneratorType]))
 
-def load_image_generator(model: str,  #TODO fix
+def load_image_generator(model: str,
                          device_map: Optional[Union[str, torch.device]]=None, 
                          torch_dtype:str|torch.dtype=torch.float16,
                          seed:int=None, 

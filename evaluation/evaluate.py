@@ -129,9 +129,6 @@ class CLIPScore(Evaluate):
                 continue
             prompts = self.load_prompts(prompt_folder)
             captions = self.load_captions(prompt_folder)
-            if len(captions) == len(prompts) - 1:
-                #TODO temporary fix for missing captions; main bug is already fixed
-                captions.append("")
 
             with torch.no_grad():
                 # Tokenize and encode user prompt
@@ -219,10 +216,6 @@ class ImageSimilarity(Evaluate):
                 continue
             prompts = self.load_prompts(prompt_folder)
             captions = self.load_captions(prompt_folder)
-            if len(captions) == len(prompts) - 1:
-                #TODO temporary fix for missing captions; main bug is already fixed
-                captions.append("")
-
 
             with torch.no_grad():
                 # load and encode generated images
@@ -288,11 +281,6 @@ class CaptionEvaluation(Evaluate):
                 continue
             prompts = self.load_prompts(prompt_folder)
             captions = self.load_captions(prompt_folder)
-            if len(captions) == len(prompts) - 1:
-                #TODO temporary fix for missing captions; main bug is already fixed
-                captions.append("")
-
-
 
             original_prompt = prompts[0]
 
@@ -359,9 +347,6 @@ class LLMEvaluation(Evaluate):
                 continue
             prompts = self.load_prompts(prompt_folder)
             captions = self.load_captions(prompt_folder)
-            if len(captions) == len(prompts) - 1:
-                #TODO temporary fix for missing captions; main bug is already fixed
-                captions.append("")
             terminated_at, best_image_num = self.terminated_and_best_image(prompt_folder)
 
             original_prompt = prompts[0]
