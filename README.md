@@ -46,6 +46,7 @@ results might be different from the original)
 
 > ```python -m model.run_model pipeline --mode full_experiment --experiment_name full_experiment_parti dataset --dataset parti-prompts-medium```
 
+Note: You can also use the provided run_model.job file.
 ### Executing Pipeline for a Dataset
 
 You can run the following command to execute the Pipeline for a dataset. More options for the experiments can be found 
