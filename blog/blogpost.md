@@ -243,7 +243,7 @@ The generated image of the first iteration (iteration 0), on average, has a high
 
 **There is a better approach than always using the results of the first iteration:**
 
-The CLIPScores in the first iteration (iteration 0) are lower than the average maximum scores of any iteration. This shows that always considering the first generated image does not give the optimal overall results on average since it might be inaccurate or faulty in some way, whereas further fine-tuning of the prompt might lead to generating an image that better represents the initial intention of the prompt. Another interesting point is that in 64.6% of cases, the CLIPScore in iteration 0 was strictly compared to later iterations (1 to 5). This further justifies our motivation that there is indeed a benefit in trying to generate a better image beyond the initial one given an optimized prompt.
+The CLIPScores in the first iteration (iteration 0) are lower than the average maximum scores of any iteration. This shows that always considering the first generated image does not give the optimal overall results on average since it might be inaccurate or faulty in some way, whereas further fine-tuning of the prompt might lead to generating an image that better represents the initial intention of the prompt. Another interesting point is that in 64.6% of cases, the CLIPScore in iteration 0 was strictly higher compared to later iterations (1 to 5). This further justifies our motivation that there is indeed a benefit in trying to generate a better image beyond the initial one given an optimized prompt.
 
 **Termination step achieves comparable or better to first Iteration CLIPScores:**
 
