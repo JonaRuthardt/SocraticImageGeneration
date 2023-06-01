@@ -23,7 +23,7 @@ While this image bears some relation to the original prompt, it arguably might n
     <img src="images/Untitled%201.png" alt="Image" width="200" />
 </div>
 
-We propose a novel processing pipeline adapted explicitly to obtain improved image generations as an extension of this concept to a previously unexplored application domain. Thanks to the zero-shot characteristics of Socratic Models, we can use large image generation, image captioning, and language models that would otherwise be computationally unfeasible and capitalize on their better generalizability and performance.
+We propose a novel processing pipeline adapted explicitly to obtain improved image generations as an extension of the Socratic Models concept to a previously unexplored application domain. Thanks to the zero-shot characteristics of Socratic Models, we can use large image generation, image captioning, and language models that would otherwise be computationally unfeasible and capitalize on their better generalizability and performance.
 
 The remainder of this blog post will be kicked off by further expounding on the notion of Socratic Models and their relation to the proposed approach. We furthermore detail the motivation for working on the presented problem and briefly outline previous work in this domain. After an introduction to the main processing pipeline, the attention is shifted toward evaluating the proposed approach's performance and effectiveness.
 
