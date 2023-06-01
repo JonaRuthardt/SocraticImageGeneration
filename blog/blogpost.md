@@ -17,7 +17,7 @@ To illustrate this objective, consider the following example: a user wants to ge
     <img src="images/Untitled.png" alt="Image" width="200" />
 </div>
 
-While this image bears some relation to the original prompt, it arguably might not reflect the kind of depiction the user desired as the human intuition would presumably not picture a cartoonish version given the text snippet. By leveraging the more human-aligned propensities of large language models, the appearance and elements of the current image can be considered to propose a prompt that is probable to result in more desirable results. For the above image, which could, for instance, be transcribed as *”a skateboard with a cartoon cat on top of it,”* the language model did propose a prompt such as *“Create an image of a cat riding a snowboard on a snowy mountain terrain.”* This improved prompt does yield a supposedly more preferable image:
+While this image bears some relation to the original prompt, it arguably might not reflect the kind of depiction the user desired as the human intuition would presumably not picture a cartoonish version given the text snippet. By leveraging the more human-aligned propensities of large language models, the appearance and elements of the current image can be considered to propose a prompt that is probable to result in more desirable results. For the above image, which could, for instance, be transcribed as *”a skateboard with a cartoon cat on top of it,”* the language model could propose a prompt such as *“Create an image of a cat riding a snowboard on a snowy mountain terrain.”* This improved prompt does yield a supposedly more preferable image:
 
 <div style="text-align: center;">
     <img src="images/Untitled%201.png" alt="Image" width="200" />
